@@ -18,9 +18,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Formatter;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 public class MainActivity extends Activity {
@@ -80,6 +83,12 @@ public class MainActivity extends Activity {
         mTotalRepetitionsText.addTextChangedListener(new MyTextWatcher(R.id.total_repetitions));
 
         mHandler = new Handler();
+    }
+
+    @Override
+    protected void onPause() {
+        stop();
+        super.onPause();
     }
 
     @Override
@@ -211,17 +220,17 @@ public class MainActivity extends Activity {
         Editor editor = prefs.edit();
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
-        StringBuilder sb = new StringBuilder();
-        sb.append(cal.get(Calendar.YEAR)).append("-").append(cal.get(Calendar.MONTH) + 1)
-                .append("-").append(cal.get(Calendar.DAY_OF_MONTH)).append(" ")
-                .append(cal.get(Calendar.HOUR_OF_DAY)).append(":").append(cal.get(Calendar.MINUTE));
-        sb.append(" - Hang/Pause " + mHangTime + "s/" + mPauseTime + "s, Repetitions "
-                + mRepetitions);
-        sb.append(", Rest " + mRestTime + "m, Total repetitions " + mTotalRepetitions);
-        history.add(sb.toString());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String log = sdf.format(cal.getTime());
+        log += " - Hang/Pause " + mHangTime + "s/" + mPauseTime + "s, Repetitions "
+                + mRepetitions;
+        log += ", Rest " + mRestTime + "m, Total repetitions " + mTotalRepetitions;
+        history.add(log);
         editor.putStringSet("history", history);
-        editor.commit();
-        setText("Training \"" + sb.toString() + "\" has been added to the history");
+        if (!editor.commit()) {
+            Toast.makeText(this, "Failed to save shared preferences", Toast.LENGTH_LONG).show();
+        }
+        setText("Training \"" + log + "\" has been added to the history");
     }
 
     private void save() {
@@ -231,7 +240,9 @@ public class MainActivity extends Activity {
         editor.putInt("repetitions", mRepetitions);
         editor.putInt("rest_time", mRestTime);
         editor.putInt("total_repetitions", mTotalRepetitions);
-        editor.commit();
+        if (!editor.commit()) {
+            Toast.makeText(this, "Failed to save shared preferences", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void load() {
