@@ -31,6 +31,9 @@ public class TimerService extends Service {
     @Override
     public void onDestroy() {
         Log.d(TAG, "TimerService.onDestroy");
+        if (mTimerThread != null) {
+            mTimerThread.mRunning = false;
+        }
         super.onDestroy();
         mActivity = null;
     }
