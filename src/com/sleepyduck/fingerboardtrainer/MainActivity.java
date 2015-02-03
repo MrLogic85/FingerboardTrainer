@@ -3,13 +3,18 @@ package com.sleepyduck.fingerboardtrainer;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Vibrator;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +32,7 @@ import java.util.Locale;
 import java.util.Set;
 
 public class MainActivity extends Activity {
+    public static final String TAG = "fingerboardtrainer";
     private TextView mTextView;
 
     private Button mStartButton;
@@ -55,10 +61,34 @@ public class MainActivity extends Activity {
 
     private boolean mRunning;
 
+    private Intent mServiceIntent;
+
+    private TimerBinder mBinder;
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceDisconnected");
+            mBinder = null;
+            mStartButton.setEnabled(false);
+        }
+
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.d(TAG, "onServiceConnected");
+            mBinder = (TimerBinder)service;
+            mBinder.getService().setMainActivity(MainActivity.this);
+            mStartButton.setEnabled(true);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mServiceIntent = new Intent(this, TimerService.class);
+        startService(mServiceIntent);
 
         mTextView = (TextView)findViewById(R.id.textView);
         mStartButton = (Button)findViewById(R.id.start_button);
@@ -86,9 +116,24 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        bindService(mServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        super.onResume();
+    }
+
+    @Override
     protected void onPause() {
-        stop();
+        Log.d(TAG, "onPause");
+        unbindService(mServiceConnection);
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        stopService(mServiceIntent);
+        super.onDestroy();
     }
 
     @Override
@@ -115,122 +160,58 @@ public class MainActivity extends Activity {
     }
 
     private void start() {
-        mStartButton.setText(R.string.stop);
-        mRunning = true;
-        new Thread() {
-            @Override
-            public void run() {
-                for (int time = 3; time > 0 && mRunning; --time) {
-                    setText("Start in " + time + "s");
-                    sleepFor(1000);
-                }
-                int totalRep = mTotalRepetitions;
-                int rep;
-                while ((totalRep--) > 0 && mRunning) {
-                    rep = mRepetitions;
-                    while ((rep--) > 0 && mRunning) {
-                        vibrateHang();
-                        for (int time = mHangTime; time > 0 && mRunning; --time) {
-                            setText("Hang " + time + "s");
-                            sleepFor(1000);
-                        }
-                        vibratePause();
-                        if (rep > 0) {
-                            for (int time = mPauseTime; time > 0 && mRunning; --time) {
-                                setText("Pause " + time + "s");
-                                sleepFor(1000);
-                            }
-                        }
-                    }
-                    if (totalRep > 0) {
-                        Calendar cal = Calendar.getInstance();
-                        for (int time = mRestTime * 60; time > 0 && mRunning; --time) {
-                            cal.setTimeInMillis(time * 1000);
-                            setText("Rest " + cal.get(Calendar.MINUTE) + "m "
-                                    + cal.get(Calendar.SECOND) + "s");
-                            sleepFor(1000);
-                            if (time == 4) {
-                                vibrateWarn();
-                            }
-                        }
-                    }
-                }
-                if (mRunning) {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            trainingCompleted();
-                        }
-                    });
-                }
-            }
-        }.start();
+        Log.d(TAG, "start, mBinder = " + mBinder);
+        if (mBinder != null) {
+            mStartButton.setText(R.string.stop);
+            mRunning = true;
+            mBinder.getService().startTimer(mHangTime, mPauseTime, mRepetitions, mRestTime,
+                    mTotalRepetitions);
+        }
     }
 
     private void stop() {
-        mStartButton.setText(R.string.start);
-        mRunning = false;
-        mTextView.setText("");
+        if (mBinder != null) {
+            mStartButton.setText(R.string.start);
+            mRunning = false;
+            mBinder.getService().stopTimer();
+            setText("");
+        }
     }
 
-    protected void setText(final String text) {
+    public void setText(final String text) {
         mHandler.post(new Runnable() {
-            @Override
             public void run() {
                 mTextView.setText(text);
             }
         });
     }
 
-    private void vibrateHang() {
-        Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(800);
-    }
-
-    private void vibratePause() {
-        Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(new long[] {
-                0, 200, 200, 200, 200, 200
-        }, -1);
-    }
-
-    private void vibrateWarn() {
-        Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(new long[] {
-                0, 400, 600, 400, 600, 400
-        }, -1);
-    }
-
-    private void sleepFor(long millis) {
-        long sleepTime = System.currentTimeMillis() + millis;
-        while (sleepTime > System.currentTimeMillis()) {
-            try {
-                Thread.sleep(sleepTime - System.currentTimeMillis());
-            } catch (InterruptedException ignore) {
-
+    public void onTrainingCompleted(final int hangTime, final int pauseTime, final int repetitions,
+            final int restTime, final int totalRepetitions) {
+        mHandler.post(new Runnable() {
+            public void run() {
+                stop();
+                SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
+                Set<String> history = new HashSet<String>();
+                history = prefs.getStringSet("history", history);
+                Editor editor = prefs.edit();
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(System.currentTimeMillis());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale
+                        .getDefault());
+                String log = sdf.format(cal.getTime());
+                log += " - Hang/Pause " + hangTime + "s/" + pauseTime + "s, Repetitions "
+                        + repetitions + ", Rest " + restTime + "m, Total repetitions "
+                        + totalRepetitions;
+                history.add(log);
+                editor.putStringSet("history", history);
+                if (!editor.commit()) {
+                    Toast.makeText(MainActivity.this, "Failed to save shared preferences",
+                            Toast.LENGTH_LONG).show();
+                }
+                setText("Training \"" + log + "\" has been added to the history");
             }
-        }
-    }
-
-    private void trainingCompleted() {
-        stop();
-        SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
-        Set<String> history = new HashSet<String>();
-        history = prefs.getStringSet("history", history);
-        Editor editor = prefs.edit();
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        String log = sdf.format(cal.getTime());
-        log += " - Hang/Pause " + mHangTime + "s/" + mPauseTime + "s, Repetitions "
-                + mRepetitions;
-        log += ", Rest " + mRestTime + "m, Total repetitions " + mTotalRepetitions;
-        history.add(log);
-        editor.putStringSet("history", history);
-        if (!editor.commit()) {
-            Toast.makeText(this, "Failed to save shared preferences", Toast.LENGTH_LONG).show();
-        }
-        setText("Training \"" + log + "\" has been added to the history");
+        });
     }
 
     private void save() {
@@ -268,7 +249,6 @@ public class MainActivity extends Activity {
             mId = viewId;
         }
 
-        @Override
         public void afterTextChanged(Editable editable) {
             if (editable.length() > 0) {
                 int val = Integer.valueOf(editable.toString());
@@ -294,11 +274,9 @@ public class MainActivity extends Activity {
             }
         }
 
-        @Override
         public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
         }
 
-        @Override
         public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
         }
 

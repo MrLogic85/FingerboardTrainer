@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sleepyduck.fingerboardtrainer"
-    android:versionCode="3"
-    android:versionName="1.0.0.2" >
+    android:versionCode="5"
+    android:versionName="1.1.0.1" >
 
     <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="17" />
+        android:minSdkVersion="14"
+        android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
 
@@ -29,6 +29,9 @@
             android:name="com.sleepyduck.fingerboardtrainer.HistoryActivity"
             android:label="@string/title_activity_history" >
         </activity>
+
+        <service android:name="com.sleepyduck.fingerboardtrainer.TimerService" >
+        </service>
     </application>
 
 </manifest>
