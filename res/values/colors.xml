@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="hang_overlay">#88FFFFFF</color>
+    <color name="hang_overlay">#55FFFFFF</color>
+    <color name="pause_overlay">#55FFFFFF</color>
+    <color name="rest_overlay">#55FFFFFF</color>
+    <color name="repeat_overlay">#A5D6A7</color>
+    <color name="repeat_total_overlay">#80CBC4</color>
+    <color name="button_background">#4CAF50</color>
+    <color name="button_background_pressed">#B34CAF50</color>
+    <color name="button_text">#FFFFFF</color>
+    <color name="text_background">#B2DFDB</color>
+    <color name="background">#E8F5E9</color>
 </resources>

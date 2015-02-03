@@ -209,7 +209,7 @@ public class MainActivity extends Activity {
                     Toast.makeText(MainActivity.this, "Failed to save shared preferences",
                             Toast.LENGTH_LONG).show();
                 }
-                setText("Training \"" + log + "\" has been added to the history");
+                setText("Good job!");
             }
         });
     }
