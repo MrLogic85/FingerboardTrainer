@@ -4,11 +4,8 @@ package com.sleepyduck.fingerboardtrainer;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;

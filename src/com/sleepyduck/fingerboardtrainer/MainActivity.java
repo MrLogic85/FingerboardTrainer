@@ -4,35 +4,34 @@ package com.sleepyduck.fingerboardtrainer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Vibrator;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Formatter;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
 public class MainActivity extends Activity {
     public static final String TAG = "fingerboardtrainer";
+
     private TextView mTextView;
 
     private Button mStartButton;
@@ -47,15 +46,15 @@ public class MainActivity extends Activity {
 
     private int mTotalRepetitions;
 
-    private EditText mHangTimeText;
+    private Button mHangTimeButton;
 
-    private EditText mPauseTimeText;
+    private Button mPauseTimeButton;
 
-    private EditText mRepetitionsText;
+    private Button mRepetitionsButton;
 
-    private EditText mRestTimeText;
+    private Button mRestTimeButton;
 
-    private EditText mTotalRepetitionsText;
+    private Button mTotalRepetitionsButton;
 
     private Handler mHandler;
 
@@ -92,25 +91,12 @@ public class MainActivity extends Activity {
 
         mTextView = (TextView)findViewById(R.id.textView);
         mStartButton = (Button)findViewById(R.id.start_button);
-
-        mHangTimeText = (EditText)findViewById(R.id.hang_time);
-        mPauseTimeText = (EditText)findViewById(R.id.pause_time);
-        mRepetitionsText = (EditText)findViewById(R.id.repetitions);
-        mRestTimeText = (EditText)findViewById(R.id.rest_time);
-        mTotalRepetitionsText = (EditText)findViewById(R.id.total_repetitions);
-        if (savedInstanceState == null) {
-            mHangTime = Integer.valueOf(mHangTimeText.getText().toString());
-            mPauseTime = Integer.valueOf(mPauseTimeText.getText().toString());
-            mRepetitions = Integer.valueOf(mRepetitionsText.getText().toString());
-            mRestTime = Integer.valueOf(mRestTimeText.getText().toString());
-            mTotalRepetitions = Integer.valueOf(mTotalRepetitionsText.getText().toString());
-            load();
-        }
-        mHangTimeText.addTextChangedListener(new MyTextWatcher(R.id.hang_time));
-        mPauseTimeText.addTextChangedListener(new MyTextWatcher(R.id.pause_time));
-        mRepetitionsText.addTextChangedListener(new MyTextWatcher(R.id.repetitions));
-        mRestTimeText.addTextChangedListener(new MyTextWatcher(R.id.rest_time));
-        mTotalRepetitionsText.addTextChangedListener(new MyTextWatcher(R.id.total_repetitions));
+        mHangTimeButton = (Button)findViewById(R.id.hang_time);
+        mPauseTimeButton = (Button)findViewById(R.id.pause_time);
+        mRepetitionsButton = (Button)findViewById(R.id.repetitions);
+        mRestTimeButton = (Button)findViewById(R.id.rest_time);
+        mTotalRepetitionsButton = (Button)findViewById(R.id.total_repetitions);
+        load();
 
         mHandler = new Handler();
     }
@@ -201,8 +187,8 @@ public class MainActivity extends Activity {
                         .getDefault());
                 String log = sdf.format(cal.getTime());
                 log += " - Hang/Pause " + hangTime + "s/" + pauseTime + "s, Repetitions "
-                        + repetitions + ", Rest " + restTime + "m, Total repetitions "
-                        + totalRepetitions;
+                        + repetitions + ", Rest " + (restTime / 60) + "m " + (restTime % 60)
+                        + "s, Total repetitions " + totalRepetitions;
                 history.add(log);
                 editor.putStringSet("history", history);
                 if (!editor.commit()) {
@@ -227,58 +213,128 @@ public class MainActivity extends Activity {
     }
 
     private void load() {
+        Log.d(TAG, "pre load, mRestTime = " + mRestTime);
         SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
-        mHangTime = prefs.getInt("hang_time", mHangTime);
-        mPauseTime = prefs.getInt("pause_time", mPauseTime);
-        mRepetitions = prefs.getInt("repetitions", mRepetitions);
-        mRestTime = prefs.getInt("rest_time", mRestTime);
-        mTotalRepetitions = prefs.getInt("total_repetitions", mTotalRepetitions);
+        mHangTime = prefs.getInt("hang_time", Integer.valueOf(getString(R.string.initial_hang_time)));
+        mPauseTime = prefs.getInt("pause_time", Integer.valueOf(getString(R.string.initial_pause_time)));
+        mRepetitions = prefs.getInt("repetitions", Integer.valueOf(getString(R.string.initial_repetitions)));
+        mRestTime = prefs.getInt("rest_time", Integer.valueOf(getString(R.string.initial_rest_time)));
+        mTotalRepetitions = prefs.getInt("total_repetitions", Integer.valueOf(getString(R.string.initial_total_repetitions)));
 
-        mHangTimeText.setText(String.valueOf(mHangTime));
-        mPauseTimeText.setText(String.valueOf(mPauseTime));
-        mRepetitionsText.setText(String.valueOf(mRepetitions));
-        mRestTimeText.setText(String.valueOf(mRestTime));
-        mTotalRepetitionsText.setText(String.valueOf(mTotalRepetitions));
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.getDefault());
+        mHangTimeButton.setText(sdf.format(mHangTime * 1000));
+        mPauseTimeButton.setText(sdf.format(mPauseTime * 1000));
+        mRepetitionsButton.setText(String.valueOf(mRepetitions));
+        mRestTimeButton.setText(sdf.format(mRestTime * 1000));
+        mTotalRepetitionsButton.setText(String.valueOf(mTotalRepetitions));
+
+        Log.d(TAG, "post load, mRestTime = " + mRestTime);
     }
 
-    private class MyTextWatcher implements TextWatcher {
+    public void onChangeTimeClicked(final View view) {
+        final View picker = View.inflate(this, R.layout.minutes_seconds_picker, null);
+        final NumberPicker minutes = (NumberPicker)picker.findViewById(R.id.time_picker_minutes);
+        final NumberPicker seconds = (NumberPicker)picker.findViewById(R.id.time_picker_seconds);
+        minutes.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        seconds.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        minutes.setMaxValue(60);
+        seconds.setMaxValue(59);
+        int val = getValueFromViewId(view.getId());
+        minutes.setValue(val / 60);
+        seconds.setValue(val % 60);
+        Log.d(TAG, "onChangeTimeClicked, view = " + ((Button)view).getText() + ", val = " + val);
+        new AlertDialog.Builder(this).setView(picker).setTitle(getTitleFromViewId(view.getId()))
+                .setNegativeButton(android.R.string.cancel, null).setCancelable(true)
+                .setPositiveButton(android.R.string.yes, new OnClickListener() {
 
-        private int mId;
+                    public void onClick(DialogInterface dialog, int which) {
+                        updateTime((Button)view, minutes.getValue() * 60 + seconds.getValue());
+                    }
+                }).show();
+    }
 
-        public MyTextWatcher(int viewId) {
-            mId = viewId;
+    public void onChangeValueClicked(final View view) {
+        final NumberPicker picker = new NumberPicker(this);
+        picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        picker.setMaxValue(60);
+        picker.setValue(getValueFromViewId(view.getId()));
+        new AlertDialog.Builder(this).setView(picker).setTitle(getTitleFromViewId(view.getId()))
+                .setNegativeButton(android.R.string.cancel, null).setCancelable(true)
+                .setPositiveButton(android.R.string.yes, new OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        updateValue((Button)view, picker.getValue());
+                    }
+                }).show();
+    }
+
+    private int getValueFromViewId(int id) {
+        switch (id) {
+            case R.id.hang_time:
+                return mHangTime;
+            case R.id.pause_time:
+                return mPauseTime;
+            case R.id.rest_time:
+                return mRestTime;
+            case R.id.repetitions:
+                return mRepetitions;
+            case R.id.total_repetitions:
+                return mTotalRepetitions;
+            default:
+                break;
         }
+        return 0;
+    }
 
-        public void afterTextChanged(Editable editable) {
-            if (editable.length() > 0) {
-                int val = Integer.valueOf(editable.toString());
-                switch (mId) {
-                    case R.id.hang_time:
-                        mHangTime = val;
-                        break;
-                    case R.id.pause_time:
-                        mPauseTime = val;
-                        break;
-                    case R.id.repetitions:
-                        mRepetitions = val;
-                        break;
-                    case R.id.rest_time:
-                        mRestTime = val;
-                        break;
-                    case R.id.total_repetitions:
-                        mTotalRepetitions = val;
-                        break;
-                    default:
-                }
-                save();
-            }
+    private int getTitleFromViewId(int id) {
+        switch (id) {
+            case R.id.hang_time:
+                return R.string.hang_time;
+            case R.id.pause_time:
+                return R.string.pause_time;
+            case R.id.rest_time:
+                return R.string.rest_time;
+            case R.id.repetitions:
+                return R.string.repetitions;
+            case R.id.total_repetitions:
+                return R.string.total_repetitions;
+            default:
+                break;
         }
+        return 0;
+    }
 
-        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+    private void updateTime(Button view, int seconds) {
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.getDefault());
+        ((Button)view).setText(sdf.format(seconds * 1000));
+        switch (view.getId()) {
+            case R.id.hang_time:
+                mHangTime = seconds;
+                break;
+            case R.id.pause_time:
+                mPauseTime = seconds;
+                break;
+            case R.id.rest_time:
+                mRestTime = seconds;
+                break;
+            default:
+                break;
         }
+        save();
+    }
 
-        public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+    private void updateValue(Button view, int value) {
+        ((Button)view).setText("" + value);
+        switch (view.getId()) {
+            case R.id.repetitions:
+                mRepetitions = value;
+                break;
+            case R.id.total_repetitions:
+                mTotalRepetitions = value;
+                break;
+            default:
+                break;
         }
-
+        save();
     }
 }

@@ -2,7 +2,6 @@ package com.sleepyduck.fingerboardtrainer;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -27,7 +26,6 @@ public class MainLayout extends ViewGroup {
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int height = MeasureSpec.getSize(heightMeasureSpec);
 		int unitSize = Math.min(width / 2, height / 4);
-		Log.d(TAG, "onMeasure, width = " + width + ", height = " + height + ", unitSize = " + unitSize);
 		int childCount = getChildCount();
 		View view;
 		int measuredWidth, measuredHeight;
@@ -66,7 +64,6 @@ public class MainLayout extends ViewGroup {
 		int width = right - left;
 		int height = bottom - top;
 		int unitSize = Math.min(width / 2, height / 4);
-		Log.d(TAG, "onLayout, width = " + width + ", height = " + height + ", unitSize = " + unitSize);
 		int widthPadding = (width - unitSize * 2) / 2;
 		int childCount = getChildCount();
 		View view;

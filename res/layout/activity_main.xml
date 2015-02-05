@@ -2,74 +2,84 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:keepScreenOn="true"
     android:orientation="vertical"
-    tools:context=".MainActivity" 
-    android:background="@color/background">
+    tools:context=".MainActivity" >
 
-    <EditText
+    <Button
         android:id="@+id/hang_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/hang"
         android:gravity="center"
         android:inputType="phone|number"
-        android:text="@string/initial_hang_time" />
+        android:onClick="onChangeTimeClicked"
+        android:text="@string/initial_hang_time"
+        android:textSize="@dimen/text_size" />
 
-    <EditText
+    <Button
         android:id="@+id/pause_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/pause"
         android:gravity="center"
-        android:inputType="phone|number"
+        android:onClick="onChangeTimeClicked"
         android:selectAllOnFocus="true"
-        android:text="@string/initial_pause_time" />
+        android:text="@string/initial_pause_time"
+        android:textSize="@dimen/text_size" />
 
-    <EditText
+    <Button
         android:id="@+id/repetitions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/repeat"
         android:gravity="center"
-        android:inputType="phone|number"
+        android:onClick="onChangeValueClicked"
         android:selectAllOnFocus="true"
-        android:text="@string/initial_repetitions" />
+        android:text="@string/initial_repetitions"
+        android:textSize="@dimen/text_size" />
 
-    <EditText
+    <Button
         android:id="@+id/rest_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rest"
         android:gravity="center"
-        android:inputType="phone|number"
+        android:onClick="onChangeTimeClicked"
         android:selectAllOnFocus="true"
-        android:text="@string/initial_rest_time" />
+        android:text="@string/initial_rest_time"
+        android:textSize="@dimen/text_size" />
 
-    <EditText
+    <Button
         android:id="@+id/total_repetitions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/repeat_total"
         android:gravity="center"
-        android:inputType="phone|number"
+        android:onClick="onChangeValueClicked"
         android:selectAllOnFocus="true"
-        android:text="@string/initial_total_repetitions" />
+        android:text="@string/initial_total_repetitions"
+        android:textSize="@dimen/text_size" />
 
     <Button
         android:id="@+id/start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/button"
-        android:textColor="@color/button_text"
+        android:gravity="center"
         android:onClick="onStartClicked"
-        android:text="@string/start" />
+        android:text="@string/start"
+        android:textColor="@color/button_text"
+        android:textSize="@dimen/text_size" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
-        android:background="@color/text_background"
         android:layout_height="match_parent"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
+        android:background="@color/text_background"
+        android:gravity="center"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+        android:textSize="@dimen/text_size" />
 
 </com.sleepyduck.fingerboardtrainer.MainLayout>

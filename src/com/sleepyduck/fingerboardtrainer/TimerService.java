@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.Vibrator;
-import android.util.Log;
 
 import java.util.Calendar;
 
@@ -18,19 +17,16 @@ public class TimerService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind");
         return new TimerBinder(this);
     }
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "TimerService.onCreate");
         super.onCreate();
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "TimerService.onDestroy");
         if (mTimerThread != null) {
             mTimerThread.mRunning = false;
         }
@@ -40,19 +36,16 @@ public class TimerService extends Service {
 
     @Override
     public void onRebind(Intent intent) {
-        Log.d(TAG, "onRebind");
         super.onRebind(intent);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "onUnbind");
         mActivity = null;
         return super.onUnbind(intent);
     }
