@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sleepyduck.fingerboardtrainer"
-    android:versionCode="9"
-    android:versionName="2.1.0.1" >
+    android:versionCode="12"
+    android:versionName="2.3.0.0" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="16"
         android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.VIBRATE" />

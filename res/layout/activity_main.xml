@@ -1,5 +1,6 @@
 <com.sleepyduck.fingerboardtrainer.MainLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -13,7 +14,6 @@
         android:layout_height="wrap_content"
         android:background="@drawable/hang"
         android:gravity="center"
-        android:inputType="phone|number"
         android:onClick="onChangeTimeClicked"
         android:text="@string/initial_hang_time"
         android:textSize="@dimen/text_size" />

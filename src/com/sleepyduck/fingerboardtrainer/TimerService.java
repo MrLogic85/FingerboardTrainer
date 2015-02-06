@@ -3,9 +3,11 @@ package com.sleepyduck.fingerboardtrainer;
 
 import android.app.Service;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.os.Vibrator;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class TimerService extends Service {
@@ -15,6 +17,12 @@ public class TimerService extends Service {
 
     private TimerThread mTimerThread;
 
+    private MediaPlayer mBeepMidPlayer;
+
+    private MediaPlayer mBeepHighPlayer;
+
+    private MediaPlayer mBeepVerryHighPlayer;
+
     @Override
     public IBinder onBind(Intent intent) {
         return new TimerBinder(this);
@@ -22,6 +30,9 @@ public class TimerService extends Service {
 
     @Override
     public void onCreate() {
+        mBeepMidPlayer = MediaPlayer.create(this, R.raw.beep_mid);
+        mBeepHighPlayer = MediaPlayer.create(this, R.raw.beep_hig);
+        mBeepVerryHighPlayer = MediaPlayer.create(this, R.raw.beep_very_high);
         super.onCreate();
     }
 
@@ -30,6 +41,9 @@ public class TimerService extends Service {
         if (mTimerThread != null) {
             mTimerThread.mRunning = false;
         }
+        mBeepMidPlayer.release();
+        mBeepHighPlayer.release();
+        mBeepVerryHighPlayer.release();
         super.onDestroy();
         mActivity = null;
     }
@@ -55,7 +69,7 @@ public class TimerService extends Service {
     }
 
     public void startTimer(final int hangTime, final int pauseTime, final int repetitions,
-            final int restTime, final int totalRepetitions) {
+            final int restTime, final int totalRepetitions, final Notification notification) {
         mTimerThread = new TimerThread() {
             @Override
             public void run() {
@@ -68,28 +82,36 @@ public class TimerService extends Service {
                 while ((totalRep--) > 0 && mRunning) {
                     rep = repetitions;
                     while ((rep--) > 0 && mRunning) {
-                        vibrateHang();
+                        notifyHang(notification);
                         for (int time = hangTime; time > 0 && mRunning; --time) {
-                            setText("Hang " + time + "s");
+                            setText("Round " + (repetitions - rep) + "/" + repetitions + " : Set "
+                                    + (totalRepetitions - totalRep) + "/" + totalRepetitions
+                                    + "\nHang " + time + "s");
                             sleepFor(1000);
                         }
-                        vibratePause();
+                        if (mRunning) {
+                            notifyPause(notification);
+                        }
                         if (rep > 0) {
                             for (int time = pauseTime; time > 0 && mRunning; --time) {
-                                setText("Pause " + time + "s");
+                                setText("Round " + (repetitions - rep) + "/" + repetitions
+                                        + " : Set " + (totalRepetitions - totalRep) + "/"
+                                        + totalRepetitions + "\nPause " + time + "s");
                                 sleepFor(1000);
                             }
                         }
                     }
                     if (totalRep > 0) {
                         Calendar cal = Calendar.getInstance();
-                        for (int time = restTime * 60; time > 0 && mRunning; --time) {
+                        for (int time = restTime; time > 0 && mRunning; --time) {
                             cal.setTimeInMillis(time * 1000);
-                            setText("Rest " + cal.get(Calendar.MINUTE) + "m "
-                                    + cal.get(Calendar.SECOND) + "s");
+                            setText("Round " + (repetitions - rep - 1) + "/" + repetitions
+                                    + " : Set " + (totalRepetitions - totalRep) + "/"
+                                    + totalRepetitions + "\nRest " + cal.get(Calendar.MINUTE)
+                                    + "m " + cal.get(Calendar.SECOND) + "s");
                             sleepFor(1000);
-                            if (time == 4) {
-                                vibrateWarn();
+                            if (time == 4 && mRunning) {
+                                notifyWarn(notification);
                             }
                         }
                     }
@@ -114,23 +136,80 @@ public class TimerService extends Service {
         }
     }
 
-    private void vibrateHang() {
-        Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(800);
+    private void notifyHang(Notification notification) {
+        switch (notification) {
+            case VIBRATE:
+                Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(800);
+                break;
+            case SOUND:
+                playBeep(mBeepHighPlayer, 800);
+                break;
+            default:
+                break;
+        }
     }
 
-    private void vibratePause() {
-        Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(new long[] {
-                0, 200, 200, 200, 200, 200
-        }, -1);
+    private void notifyPause(Notification notification) {
+        switch (notification) {
+            case VIBRATE:
+                Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(new long[] {
+                        0, 200, 200, 200, 200, 200
+                }, -1);
+                break;
+            case SOUND:
+                playBeep(mBeepVerryHighPlayer, 200, 200, 200, 200, 200);
+                break;
+            default:
+                break;
+        }
     }
 
-    private void vibrateWarn() {
-        Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(new long[] {
-                0, 400, 600, 400, 600, 400
-        }, -1);
+    private void notifyWarn(Notification notification) {
+        switch (notification) {
+            case VIBRATE:
+                Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(new long[] {
+                        0, 400, 600, 400, 600, 400
+                }, -1);
+                break;
+            case SOUND:
+                playBeep(mBeepMidPlayer, 400, 600, 400, 600, 400);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void playBeep(final MediaPlayer player, final long... lengths) {
+        if (lengths.length % 2 != 1) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        player.start();
+        new Thread() {
+            public void run() {
+                try {
+                    Thread.sleep(lengths[0]);
+                } catch (InterruptedException ignore) {
+                } finally {
+                    player.pause();
+                    player.seekTo(0);
+                    if (lengths.length > 2) {
+                        new Thread() {
+                            public void run() {
+                                try {
+                                    Thread.sleep(lengths[1]);
+                                } catch (InterruptedException ignore) {
+                                } finally {
+                                    playBeep(player, Arrays.copyOfRange(lengths, 2, lengths.length));
+                                }
+                            }
+                        }.start();
+                    }
+                }
+            }
+        }.start();
     }
 
     private void sleepFor(long millis) {

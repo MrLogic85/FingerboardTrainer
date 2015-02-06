@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RadioButton
+        android:id="@+id/mode_silent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/silent" />
+
+    <RadioButton
+        android:id="@+id/mode_sound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sound" />
+
+    <RadioButton
+        android:id="@+id/mode_vibrate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/vibrate" />
+
+</RadioGroup>

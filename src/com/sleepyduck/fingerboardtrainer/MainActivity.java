@@ -1,6 +1,8 @@
 
 package com.sleepyduck.fingerboardtrainer;
 
+import com.sleepyduck.fingerboardtrainer.MainLayout.LayoutState;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -20,6 +22,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +36,8 @@ import java.util.Set;
 
 public class MainActivity extends Activity {
     public static final String TAG = "fingerboardtrainer";
+
+    private Notification meNotification;
 
     private TextView mTextView;
 
@@ -64,6 +71,8 @@ public class MainActivity extends Activity {
 
     private TimerBinder mBinder;
 
+    private MainLayout mMainLayout;
+
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
         public void onServiceDisconnected(ComponentName name) {
@@ -89,6 +98,7 @@ public class MainActivity extends Activity {
         mServiceIntent = new Intent(this, TimerService.class);
         startService(mServiceIntent);
 
+        mMainLayout = (MainLayout)findViewById(R.id.main_layout);
         mTextView = (TextView)findViewById(R.id.textView);
         mStartButton = (Button)findViewById(R.id.start_button);
         mHangTimeButton = (Button)findViewById(R.id.hang_time);
@@ -130,11 +140,52 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        if (item.getItemId() == R.id.action_history) {
-            startActivity(new Intent(this, HistoryActivity.class));
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_history:
+                startActivity(new Intent(this, HistoryActivity.class));
+                return true;
+            case R.id.action_notification:
+                showNotificationPicker();
+                return true;
         }
         return super.onMenuItemSelected(featureId, item);
+    }
+
+    private void showNotificationPicker() {
+        final RadioGroup picker = (RadioGroup)View
+                .inflate(this, R.layout.notification_picker, null);
+        picker.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                switch (checkedId) {
+                    case R.id.mode_silent:
+                        meNotification = Notification.NONE;
+                        break;
+                    case R.id.mode_sound:
+                        meNotification = Notification.SOUND;
+                        break;
+                    case R.id.mode_vibrate:
+                        meNotification = Notification.VIBRATE;
+                        break;
+                }
+                save();
+            }
+        });
+        RadioButton rb = null;
+        switch (meNotification) {
+            case NONE:
+                rb = (RadioButton)picker.findViewById(R.id.mode_silent);
+                break;
+            case SOUND:
+                rb = (RadioButton)picker.findViewById(R.id.mode_sound);
+                break;
+            case VIBRATE:
+                rb = (RadioButton)picker.findViewById(R.id.mode_vibrate);
+                break;
+        }
+        rb.setChecked(true);
+        new AlertDialog.Builder(this).setView(picker).setTitle(R.string.action_notification)
+                .setPositiveButton(android.R.string.ok, null).show();
     }
 
     public void onStartClicked(View view) {
@@ -151,7 +202,8 @@ public class MainActivity extends Activity {
             mStartButton.setText(R.string.stop);
             mRunning = true;
             mBinder.getService().startTimer(mHangTime, mPauseTime, mRepetitions, mRestTime,
-                    mTotalRepetitions);
+                    mTotalRepetitions, meNotification);
+            mMainLayout.setLayoutState(LayoutState.TEXT_FOCUS);
         }
     }
 
@@ -161,6 +213,7 @@ public class MainActivity extends Activity {
             mRunning = false;
             mBinder.getService().stopTimer();
             setText("");
+            mMainLayout.setLayoutState(LayoutState.NORMAL);
         }
     }
 
@@ -202,6 +255,7 @@ public class MainActivity extends Activity {
 
     private void save() {
         Editor editor = getSharedPreferences("shared_prefs", MODE_PRIVATE).edit();
+        editor.putString("notification", meNotification.toString());
         editor.putInt("hang_time", mHangTime);
         editor.putInt("pause_time", mPauseTime);
         editor.putInt("repetitions", mRepetitions);
@@ -215,11 +269,18 @@ public class MainActivity extends Activity {
     private void load() {
         Log.d(TAG, "pre load, mRestTime = " + mRestTime);
         SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
-        mHangTime = prefs.getInt("hang_time", Integer.valueOf(getString(R.string.initial_hang_time)));
-        mPauseTime = prefs.getInt("pause_time", Integer.valueOf(getString(R.string.initial_pause_time)));
-        mRepetitions = prefs.getInt("repetitions", Integer.valueOf(getString(R.string.initial_repetitions)));
-        mRestTime = prefs.getInt("rest_time", Integer.valueOf(getString(R.string.initial_rest_time)));
-        mTotalRepetitions = prefs.getInt("total_repetitions", Integer.valueOf(getString(R.string.initial_total_repetitions)));
+        meNotification = Enum.valueOf(Notification.class,
+                prefs.getString("notification", Notification.VIBRATE.toString()));
+        mHangTime = prefs.getInt("hang_time",
+                Integer.valueOf(getString(R.string.initial_hang_time)));
+        mPauseTime = prefs.getInt("pause_time",
+                Integer.valueOf(getString(R.string.initial_pause_time)));
+        mRepetitions = prefs.getInt("repetitions",
+                Integer.valueOf(getString(R.string.initial_repetitions)));
+        mRestTime = prefs.getInt("rest_time",
+                Integer.valueOf(getString(R.string.initial_rest_time)));
+        mTotalRepetitions = prefs.getInt("total_repetitions",
+                Integer.valueOf(getString(R.string.initial_total_repetitions)));
 
         SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.getDefault());
         mHangTimeButton.setText(sdf.format(mHangTime * 1000));
@@ -242,7 +303,6 @@ public class MainActivity extends Activity {
         int val = getValueFromViewId(view.getId());
         minutes.setValue(val / 60);
         seconds.setValue(val % 60);
-        Log.d(TAG, "onChangeTimeClicked, view = " + ((Button)view).getText() + ", val = " + val);
         new AlertDialog.Builder(this).setView(picker).setTitle(getTitleFromViewId(view.getId()))
                 .setNegativeButton(android.R.string.cancel, null).setCancelable(true)
                 .setPositiveButton(android.R.string.yes, new OnClickListener() {
