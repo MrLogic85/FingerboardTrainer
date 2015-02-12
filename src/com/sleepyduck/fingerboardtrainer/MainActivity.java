@@ -1,6 +1,7 @@
 
 package com.sleepyduck.fingerboardtrainer;
 
+import com.purplebrain.adbuddiz.sdk.AdBuddiz;
 import com.sleepyduck.fingerboardtrainer.MainLayout.LayoutState;
 
 import android.os.Bundle;
@@ -73,6 +74,10 @@ public class MainActivity extends Activity {
 
     private MainLayout mMainLayout;
 
+    private static final long ADD_PAUSE_TIME = 300000;
+
+    private long mAddTimer = -1;
+
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
         public void onServiceDisconnected(ComponentName name) {
@@ -109,6 +114,9 @@ public class MainActivity extends Activity {
         load();
 
         mHandler = new Handler();
+
+        AdBuddiz.setPublisherKey("aedf6afb-0fe8-479f-a8a6-c584beba4a32");
+        AdBuddiz.cacheAds(this);
     }
 
     @Override
@@ -215,6 +223,7 @@ public class MainActivity extends Activity {
             setText("");
             mMainLayout.setLayoutState(LayoutState.NORMAL);
         }
+        showAd(2000);
     }
 
     public void setText(final String text) {
@@ -223,6 +232,19 @@ public class MainActivity extends Activity {
                 mTextView.setText(text);
             }
         });
+    }
+
+    private void showAd(int timeMillis) {
+        if (mAddTimer < System.currentTimeMillis()) {
+            mAddTimer = System.currentTimeMillis() + ADD_PAUSE_TIME;
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    if (!isFinishing()) {
+                        AdBuddiz.showAd(MainActivity.this);
+                    }
+                }
+            }, timeMillis);
+        }
     }
 
     public void onTrainingCompleted(final int hangTime, final int pauseTime, final int repetitions,
@@ -251,6 +273,7 @@ public class MainActivity extends Activity {
                 setText("Good job!");
             }
         });
+        showAd(2000);
     }
 
     private void save() {
