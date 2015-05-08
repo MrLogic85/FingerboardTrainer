@@ -4,6 +4,7 @@
     <string name="app_name">Fingerboard Trainer</string>
     <string name="action_history">History</string>
     <string name="action_notification">Notification</string>
+    <string name="action_donate">Donate / Remove ads</string>
     <string name="initial_hang_time">8</string>
     <string name="initial_pause_time">8</string>
     <string name="initial_repetitions">3</string>
