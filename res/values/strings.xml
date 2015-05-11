@@ -20,7 +20,7 @@
     <string name="stop">STOP</string>
     <string name="title_activity_history">History</string>
     <string name="silent">Silent</string>
-    <string name="sound">Beep</string>
+    <string name="sound">Sound</string>
     <string name="vibrate">Vibrate</string>
 
 </resources>
