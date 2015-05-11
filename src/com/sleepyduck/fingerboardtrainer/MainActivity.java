@@ -4,7 +4,6 @@ import com.android.vending.billing.IInAppBillingService;
 import com.purplebrain.adbuddiz.sdk.AdBuddiz;
 import com.sleepyduck.fingerboardtrainer.MainLayout.LayoutState;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -21,7 +20,6 @@ import android.content.IntentSender.SendIntentException;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,14 +32,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends Activity {
-	public static final String TAG = "fingerboardtrainer";
+	private static final long ADD_PAUSE_TIME = 300000;
+	private static final int DONATE_REQUEST_CODE = 65486332;
 
 	private Notification meNotification;
 
@@ -79,20 +80,18 @@ public class MainActivity extends Activity {
 
 	private MainLayout mMainLayout;
 
-	private static final long ADD_PAUSE_TIME = 300000;
-
 	private long mAddTimer = -1;
 
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 
 		public void onServiceDisconnected(ComponentName name) {
-			Log.d(TAG, "onServiceDisconnected");
+			Log.d("onServiceDisconnected");
 			mBinder = null;
 			mStartButton.setEnabled(false);
 		}
 
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.d(TAG, "onServiceConnected");
+			Log.d("onServiceConnected");
 			mBinder = (TimerBinder) service;
 			mBinder.getService().setMainActivity(MainActivity.this);
 			mStartButton.setEnabled(true);
@@ -117,7 +116,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG, "onCreate");
+		Log.d("onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -145,22 +144,47 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			if (requestCode == DONATE_REQUEST_CODE) {
+				int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
+				String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
+				try {
+					if (responseCode == 0) {
+						JSONObject jo = new JSONObject(purchaseData);
+						Log.d("JSON RESULT: " + jo.toString());
+						mBillingManager.setHasDonated(true);
+						invalidateOptionsMenu();
+						return;
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
+				Toast.makeText(this, "Failed to parse make donation.", Toast.LENGTH_LONG).show();
+			}
+		} else {
+			Log.d("MAinActivity.onActivityResult(): resultConde = " + resultCode);
+		}
+	}
+
+	@Override
 	protected void onResume() {
-		Log.d(TAG, "onResume");
+		Log.d("onResume");
 		bindService(mServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		Log.d(TAG, "onPause");
+		Log.d("onPause");
 		unbindService(mServiceConnection);
 		super.onPause();
 	}
 
 	@Override
 	protected void onDestroy() {
-		Log.d(TAG, "onDestroy");
+		Log.d("onDestroy");
 		stopService(mServiceIntent);
 
 		if (mBillingService != null) {
@@ -173,7 +197,11 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (mBillingManager != null && mBillingManager.getBillingItems().size() > 0) {
-			getMenuInflater().inflate(R.menu.main_donate, menu);
+			if (mBillingManager.hasDonated()) {
+				getMenuInflater().inflate(R.menu.main_has_donated, menu);
+			} else {
+				getMenuInflater().inflate(R.menu.main_donate, menu);
+			}
 		} else {
 			getMenuInflater().inflate(R.menu.main, menu);
 		}
@@ -195,7 +223,7 @@ public class MainActivity extends Activity {
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
-	
+
 	public void activateInAppPurchases() {
 		invalidateOptionsMenu();
 	}
@@ -235,15 +263,13 @@ public class MainActivity extends Activity {
 		new AlertDialog.Builder(this).setView(picker).setTitle(R.string.action_notification)
 				.setPositiveButton(android.R.string.ok, null).show();
 	}
-	
+
 	private void donateMoney() {
 		try {
-			Bundle buyIntentBundle = mBillingService.getBuyIntent(3, getPackageName(),
-					   mBillingManager.getBillingItems().get(0).productId, "inapp", "");
+			Bundle buyIntentBundle = mBillingService.getBuyIntent(3, getPackageName(), mBillingManager
+					.getBillingItems().get(0).productId, "inapp", "");
 			PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-			startIntentSenderForResult(pendingIntent.getIntentSender(),
-					   1001, new Intent(), Integer.valueOf(0), Integer.valueOf(0),
-					   Integer.valueOf(0));
+			startIntentSenderForResult(pendingIntent.getIntentSender(), DONATE_REQUEST_CODE, new Intent(), 0, 0, 0);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (SendIntentException e) {
@@ -260,7 +286,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void start() {
-		Log.d(TAG, "start, mBinder = " + mBinder);
+		Log.d("start, mBinder = " + mBinder);
 		if (mBinder != null) {
 			mStartButton.setText(R.string.stop);
 			mRunning = true;
@@ -290,15 +316,17 @@ public class MainActivity extends Activity {
 	}
 
 	private void showAd(int timeMillis) {
-		if (mAddTimer < System.currentTimeMillis()) {
-			mAddTimer = System.currentTimeMillis() + ADD_PAUSE_TIME;
-			mHandler.postDelayed(new Runnable() {
-				public void run() {
-					if (!isFinishing()) {
-						AdBuddiz.showAd(MainActivity.this);
+		if (!mBillingManager.hasDonated()) {
+			if (mAddTimer < System.currentTimeMillis()) {
+				mAddTimer = System.currentTimeMillis() + ADD_PAUSE_TIME;
+				mHandler.postDelayed(new Runnable() {
+					public void run() {
+						if (!isFinishing()) {
+							AdBuddiz.showAd(MainActivity.this);
+						}
 					}
-				}
-			}, timeMillis);
+				}, timeMillis);
+			}
 		}
 	}
 
@@ -345,7 +373,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void load() {
-		Log.d(TAG, "pre load, mRestTime = " + mRestTime);
+		Log.d("pre load, mRestTime = " + mRestTime);
 		SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
 		meNotification = Enum.valueOf(Notification.class,
 				prefs.getString("notification", Notification.VIBRATE.toString()));
@@ -363,7 +391,7 @@ public class MainActivity extends Activity {
 		mRestTimeButton.setText(sdf.format(mRestTime * 1000));
 		mTotalRepetitionsButton.setText(String.valueOf(mTotalRepetitions));
 
-		Log.d(TAG, "post load, mRestTime = " + mRestTime);
+		Log.d("post load, mRestTime = " + mRestTime);
 	}
 
 	public void onChangeTimeClicked(final View view) {
