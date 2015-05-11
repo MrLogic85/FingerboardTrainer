@@ -23,6 +23,8 @@ public class TimerService extends Service {
 
     private MediaPlayer mBeepVerryHighPlayer;
 
+    private TextToSpeechManager mTextToSpeachManager;
+
     @Override
     public IBinder onBind(Intent intent) {
         return new TimerBinder(this);
@@ -33,6 +35,7 @@ public class TimerService extends Service {
         mBeepMidPlayer = MediaPlayer.create(this, R.raw.beep_mid);
         mBeepHighPlayer = MediaPlayer.create(this, R.raw.beep_hig);
         mBeepVerryHighPlayer = MediaPlayer.create(this, R.raw.beep_very_high);
+        mTextToSpeachManager = new TextToSpeechManager(this);
         super.onCreate();
     }
 
@@ -44,6 +47,7 @@ public class TimerService extends Service {
         mBeepMidPlayer.release();
         mBeepHighPlayer.release();
         mBeepVerryHighPlayer.release();
+        mTextToSpeachManager.shutdown();
         super.onDestroy();
         mActivity = null;
     }
@@ -70,6 +74,9 @@ public class TimerService extends Service {
 
     public void startTimer(final int hangTime, final int pauseTime, final int repetitions,
             final int restTime, final int totalRepetitions, final Notification notification) {
+        if (notification == Notification.SOUND && mTextToSpeachManager.isActive()) {
+            prepareSounds();
+        }
         mTimerThread = new TimerThread() {
             @Override
             public void run() {
@@ -143,7 +150,11 @@ public class TimerService extends Service {
                 vibrator.vibrate(800);
                 break;
             case SOUND:
-                playBeep(mBeepHighPlayer, 800);
+                if (mTextToSpeachManager.isActive()) {
+                    mTextToSpeachManager.say("Start");
+                } else {
+                    playBeep(mBeepHighPlayer, 800);
+                }
                 break;
             default:
                 break;
@@ -159,7 +170,11 @@ public class TimerService extends Service {
                 }, -1);
                 break;
             case SOUND:
-                playBeep(mBeepVerryHighPlayer, 200, 200, 200, 200, 200);
+                if (mTextToSpeachManager.isActive()) {
+                    mTextToSpeachManager.say("Stop");
+                } else {
+                    playBeep(mBeepVerryHighPlayer, 200, 200, 200, 200, 200);
+                }
                 break;
             default:
                 break;
@@ -175,11 +190,21 @@ public class TimerService extends Service {
                 }, -1);
                 break;
             case SOUND:
-                playBeep(mBeepMidPlayer, 400, 600, 400, 600, 400);
+                if (mTextToSpeachManager.isActive()) {
+                    mTextToSpeachManager.say("Get ready");
+                } else {
+                    playBeep(mBeepMidPlayer, 400, 600, 400, 600, 400);
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    private void prepareSounds() {
+        mTextToSpeachManager.prepareTextToSay("Start");
+        mTextToSpeachManager.prepareTextToSay("Stop");
+        mTextToSpeachManager.prepareTextToSay("Get ready");
     }
 
     private void playBeep(final MediaPlayer player, final long... lengths) {

@@ -1,3 +1,4 @@
+
 package com.sleepyduck.fingerboardtrainer;
 
 import com.android.vending.billing.IInAppBillingService;
@@ -43,64 +44,65 @@ import org.json.JSONObject;
 public class MainActivity extends Activity {
 	private static final long ADD_PAUSE_TIME = 300000;
 	private static final int DONATE_REQUEST_CODE = 65486332;
+    public static final int REQUEST_TTS = 544357324;
 
-	private Notification meNotification;
+    private Notification meNotification;
 
-	private TextView mTextView;
+    private TextView mTextView;
 
-	private Button mStartButton;
+    private Button mStartButton;
 
-	private int mHangTime;
+    private int mHangTime;
 
-	private int mRestTime;
+    private int mRestTime;
 
-	private int mRepetitions;
+    private int mRepetitions;
 
-	private int mPauseTime;
+    private int mPauseTime;
 
-	private int mTotalRepetitions;
+    private int mTotalRepetitions;
 
-	private Button mHangTimeButton;
+    private Button mHangTimeButton;
 
-	private Button mPauseTimeButton;
+    private Button mPauseTimeButton;
 
-	private Button mRepetitionsButton;
+    private Button mRepetitionsButton;
 
-	private Button mRestTimeButton;
+    private Button mRestTimeButton;
 
-	private Button mTotalRepetitionsButton;
+    private Button mTotalRepetitionsButton;
 
-	private Handler mHandler;
+    private Handler mHandler;
 
-	private boolean mRunning;
+    private boolean mRunning;
 
-	private Intent mServiceIntent;
+    private Intent mServiceIntent;
 
-	private TimerBinder mBinder;
+    private TimerBinder mBinder;
 
-	private MainLayout mMainLayout;
+    private MainLayout mMainLayout;
 
-	private long mAddTimer = -1;
+    private long mAddTimer = -1;
 
-	private ServiceConnection mServiceConnection = new ServiceConnection() {
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
 
-		public void onServiceDisconnected(ComponentName name) {
-			Log.d("onServiceDisconnected");
-			mBinder = null;
-			mStartButton.setEnabled(false);
-		}
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d("onServiceDisconnected");
+            mBinder = null;
+            mStartButton.setEnabled(false);
+        }
 
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.d("onServiceConnected");
-			mBinder = (TimerBinder) service;
-			mBinder.getService().setMainActivity(MainActivity.this);
-			mStartButton.setEnabled(true);
-		}
-	};
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.d("onServiceConnected");
+            mBinder = (TimerBinder)service;
+            mBinder.getService().setMainActivity(MainActivity.this);
+            mStartButton.setEnabled(true);
+        }
+    };
 
 	private BillingManager mBillingManager;
-	IInAppBillingService mBillingService;
-	ServiceConnection mBillingServiceConn = new ServiceConnection() {
+	private IInAppBillingService mBillingService;
+	private ServiceConnection mBillingServiceConn = new ServiceConnection() {
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			mBillingService = null;
@@ -162,6 +164,8 @@ public class MainActivity extends Activity {
 				}
 
 				Toast.makeText(this, "Failed to parse make donation.", Toast.LENGTH_LONG).show();
+			} else if (requestCode == REQUEST_TTS) {
+                TextToSpeechManager.setHasEngine(true);
 			}
 		} else {
 			Log.d("MAinActivity.onActivityResult(): resultConde = " + resultCode);
@@ -228,41 +232,43 @@ public class MainActivity extends Activity {
 		invalidateOptionsMenu();
 	}
 
-	private void showNotificationPicker() {
-		final RadioGroup picker = (RadioGroup) View.inflate(this, R.layout.notification_picker, null);
-		picker.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
+    private void showNotificationPicker() {
+        final RadioGroup picker = (RadioGroup)View
+                .inflate(this, R.layout.notification_picker, null);
+        RadioButton rb = null;
+        switch (meNotification) {
+            case NONE:
+                rb = (RadioButton)picker.findViewById(R.id.mode_silent);
+                break;
+            case SOUND:
+                rb = (RadioButton)picker.findViewById(R.id.mode_sound);
+                break;
+            case VIBRATE:
+                rb = (RadioButton)picker.findViewById(R.id.mode_vibrate);
+                break;
+        }
+        rb.setChecked(true);
+        picker.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-				switch (checkedId) {
-					case R.id.mode_silent:
-						meNotification = Notification.NONE;
-						break;
-					case R.id.mode_sound:
-						meNotification = Notification.SOUND;
-						break;
-					case R.id.mode_vibrate:
-						meNotification = Notification.VIBRATE;
-						break;
-				}
-				save();
-			}
-		});
-		RadioButton rb = null;
-		switch (meNotification) {
-			case NONE:
-				rb = (RadioButton) picker.findViewById(R.id.mode_silent);
-				break;
-			case SOUND:
-				rb = (RadioButton) picker.findViewById(R.id.mode_sound);
-				break;
-			case VIBRATE:
-				rb = (RadioButton) picker.findViewById(R.id.mode_vibrate);
-				break;
-		}
-		rb.setChecked(true);
-		new AlertDialog.Builder(this).setView(picker).setTitle(R.string.action_notification)
-				.setPositiveButton(android.R.string.ok, null).show();
-	}
+                switch (checkedId) {
+                    case R.id.mode_silent:
+                        meNotification = Notification.NONE;
+                        break;
+                    case R.id.mode_sound:
+                        meNotification = Notification.SOUND;
+                        TextToSpeechManager.initializeTTSCheck(MainActivity.this);
+                        break;
+                    case R.id.mode_vibrate:
+                        meNotification = Notification.VIBRATE;
+                        break;
+                }
+                save();
+            }
+        });
+        new AlertDialog.Builder(this).setView(picker).setTitle(R.string.action_notification)
+                .setPositiveButton(android.R.string.ok, null).show();
+    }
 
 	private void donateMoney() {
 		try {
