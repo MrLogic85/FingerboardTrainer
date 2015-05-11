@@ -382,7 +382,7 @@ public class MainActivity extends Activity {
 		Log.d("pre load, mRestTime = " + mRestTime);
 		SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
 		meNotification = Enum.valueOf(Notification.class,
-				prefs.getString("notification", Notification.VIBRATE.toString()));
+				prefs.getString("notification", Notification.SOUND.toString()));
 		mHangTime = prefs.getInt("hang_time", Integer.valueOf(getString(R.string.initial_hang_time)));
 		mPauseTime = prefs.getInt("pause_time", Integer.valueOf(getString(R.string.initial_pause_time)));
 		mRepetitions = prefs.getInt("repetitions", Integer.valueOf(getString(R.string.initial_repetitions)));
