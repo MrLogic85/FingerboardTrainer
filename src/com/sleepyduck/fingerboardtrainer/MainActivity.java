@@ -61,6 +61,7 @@ public class MainActivity extends Activity {
     private Button mTotalRepetitionsButton;
     private Handler mHandler;
     private boolean mRunning;
+    private boolean mDonateAsAction;
     private Intent mServiceIntent;
     private MainLayout mMainLayout;
     private long mAdTimer = -1;
@@ -188,6 +189,8 @@ public class MainActivity extends Activity {
         if (mBillingManager != null && mBillingManager.getBillingItems().size() > 0) {
             if (mBillingManager.hasDonated()) {
                 getMenuInflater().inflate(R.menu.main_has_donated, menu);
+            } else if (mDonateAsAction) {
+                getMenuInflater().inflate(R.menu.main_donate_as_action, menu);
             } else {
                 getMenuInflater().inflate(R.menu.main_donate, menu);
             }
@@ -310,6 +313,7 @@ public class MainActivity extends Activity {
     private void showAd(int timeMillis) {
         if (!mBillingManager.hasDonated()) {
             if (mAdTimer < System.currentTimeMillis()) {
+                showDonate();
                 mAdTimer = System.currentTimeMillis() + AD_PAUSE_TIME;
                 mHandler.postDelayed(new Runnable() {
                     public void run() {
@@ -320,6 +324,11 @@ public class MainActivity extends Activity {
                 }, timeMillis);
             }
         }
+    }
+
+    private void showDonate() {
+        mDonateAsAction = true;
+        invalidateOptionsMenu();
     }
 
     public void onTrainingCompleted(final int hangTime, final int pauseTime, final int repetitions,
