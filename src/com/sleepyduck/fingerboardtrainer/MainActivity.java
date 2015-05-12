@@ -42,49 +42,30 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends Activity {
-    private static final long ADD_PAUSE_TIME = 300000;
-
+    private static final long AD_PAUSE_TIME = 300000;
     private static final int DONATE_REQUEST_CODE = 65486332;
-
     public static final int REQUEST_TTS = 544357324;
 
     private Notification meNotification;
-
     private TextView mTextView;
-
     private Button mStartButton;
-
     private int mHangTime;
-
     private int mRestTime;
-
     private int mRepetitions;
-
     private int mPauseTime;
-
     private int mTotalRepetitions;
-
     private Button mHangTimeButton;
-
     private Button mPauseTimeButton;
-
     private Button mRepetitionsButton;
-
     private Button mRestTimeButton;
-
     private Button mTotalRepetitionsButton;
-
     private Handler mHandler;
-
     private boolean mRunning;
-
     private Intent mServiceIntent;
+    private MainLayout mMainLayout;
+    private long mAdTimer = -1;
 
     private TimerBinder mBinder;
-
-    private MainLayout mMainLayout;
-
-    private long mAddTimer = -1;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -103,7 +84,6 @@ public class MainActivity extends Activity {
     };
 
     private BillingManager mBillingManager;
-
     private IInAppBillingService mBillingService;
 
     private ServiceConnection mBillingServiceConn = new ServiceConnection() {
@@ -329,8 +309,8 @@ public class MainActivity extends Activity {
 
     private void showAd(int timeMillis) {
         if (!mBillingManager.hasDonated()) {
-            if (mAddTimer < System.currentTimeMillis()) {
-                mAddTimer = System.currentTimeMillis() + ADD_PAUSE_TIME;
+            if (mAdTimer < System.currentTimeMillis()) {
+                mAdTimer = System.currentTimeMillis() + AD_PAUSE_TIME;
                 mHandler.postDelayed(new Runnable() {
                     public void run() {
                         if (!isFinishing()) {
