@@ -341,7 +341,7 @@ public class MainActivity extends Activity {
                 stop();
                 SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
                 Set<String> history = new HashSet<String>();
-                history = prefs.getStringSet("history", history);
+                history = new HashSet<>(prefs.getStringSet("history", history));
                 Editor editor = prefs.edit();
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(System.currentTimeMillis());
