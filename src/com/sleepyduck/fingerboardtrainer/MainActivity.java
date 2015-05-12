@@ -188,6 +188,22 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (mRunning) {
+            new AlertDialog.Builder(this).setTitle(R.string.close_app)
+                    .setMessage(R.string.close_app_text)
+                    .setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).setNegativeButton(android.R.string.cancel, null).setCancelable(true).show();
+        } else {
+            finish();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mBillingManager != null && mBillingManager.getBillingItems().size() > 0) {
             if (mBillingManager.hasDonated()) {
