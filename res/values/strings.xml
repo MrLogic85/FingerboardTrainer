@@ -3,7 +3,7 @@
 
     <string name="app_name">Fingerboard Trainer</string>
     <string name="action_history">History</string>
-    <string name="action_notification">Notification</string>
+    <string name="action_notification">Notifications</string>
     <string name="action_donate">Donate</string>
     <string name="action_donate_remove_ads">Donate / Remove ads</string>
     <string name="initial_hang_time">8</string>
@@ -22,5 +22,10 @@
     <string name="silent">Silent</string>
     <string name="sound">Sound</string>
     <string name="vibrate">Vibrate</string>
+    
+    <string name="say_start">Start!</string>
+    <string name="say_stop">Stop!</string>
+    <string name="say_get_ready">Get ready!</string>
+    <string name="say_good_job">Good job!</string>
 
 </resources>

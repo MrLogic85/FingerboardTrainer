@@ -14,15 +14,10 @@ public class TimerService extends Service {
     public static final String TAG = "fingerboardtrainer";
 
     private MainActivity mActivity;
-
     private TimerThread mTimerThread;
-
     private MediaPlayer mBeepMidPlayer;
-
     private MediaPlayer mBeepHighPlayer;
-
     private MediaPlayer mBeepVerryHighPlayer;
-
     private TextToSpeechManager mTextToSpeachManager;
 
     @Override
@@ -97,7 +92,11 @@ public class TimerService extends Service {
                             sleepFor(1000);
                         }
                         if (mRunning) {
-                            notifyPause(notification);
+                            if (rep == 0 && totalRep == 0) {
+                                notifyDone(notification);
+                            } else {
+                                notifyPause(notification);
+                            }
                         }
                         if (rep > 0) {
                             for (int time = pauseTime; time > 0 && mRunning; --time) {
@@ -151,7 +150,7 @@ public class TimerService extends Service {
                 break;
             case SOUND:
                 if (mTextToSpeachManager.isActive()) {
-                    mTextToSpeachManager.say("Start");
+                    mTextToSpeachManager.say(R.string.say_start);
                 } else {
                     playBeep(mBeepHighPlayer, 800);
                 }
@@ -169,7 +168,7 @@ public class TimerService extends Service {
                 break;
             case SOUND:
                 if (mTextToSpeachManager.isActive()) {
-                    mTextToSpeachManager.say("Stop");
+                    mTextToSpeachManager.say(R.string.say_stop);
                 } else {
                     playBeep(mBeepVerryHighPlayer, 200, 200, 200, 200, 200);
                 }
@@ -187,7 +186,25 @@ public class TimerService extends Service {
                 break;
             case SOUND:
                 if (mTextToSpeachManager.isActive()) {
-                    mTextToSpeachManager.say("Get ready");
+                    mTextToSpeachManager.say(R.string.say_get_ready);
+                } else {
+                    playBeep(mBeepMidPlayer, 400, 600, 400, 600, 400);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void notifyDone(Notification notification) {
+        switch (notification) {
+            case VIBRATE:
+                Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(new long[] { 0, 400, 600, 400, 600, 400 }, -1);
+                break;
+            case SOUND:
+                if (mTextToSpeachManager.isActive()) {
+                    mTextToSpeachManager.say(R.string.say_good_job);
                 } else {
                     playBeep(mBeepMidPlayer, 400, 600, 400, 600, 400);
                 }
@@ -198,9 +215,10 @@ public class TimerService extends Service {
     }
 
     private void prepareSounds() {
-        mTextToSpeachManager.prepareTextToSay("Start");
-        mTextToSpeachManager.prepareTextToSay("Stop");
-        mTextToSpeachManager.prepareTextToSay("Get ready");
+        mTextToSpeachManager.prepareTextToSay(R.string.say_start);
+        mTextToSpeachManager.prepareTextToSay(R.string.say_stop);
+        mTextToSpeachManager.prepareTextToSay(R.string.say_get_ready);
+        mTextToSpeachManager.prepareTextToSay(R.string.say_good_job);
     }
 
     private void playBeep(final MediaPlayer player, final long... lengths) {

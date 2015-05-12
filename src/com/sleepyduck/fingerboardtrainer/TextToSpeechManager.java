@@ -98,6 +98,10 @@ public class TextToSpeechManager {
         }
     }
 
+    public void say(int textResId) {
+        say(mContext.getString(textResId));
+    }
+
     public void prepareTextToSay(String text) {
         if (!mIsTextToSpeechActive) {
             return;
@@ -117,6 +121,10 @@ public class TextToSpeechManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void prepareTextToSay(int textResId) {
+        prepareTextToSay(mContext.getString(textResId));
     }
 
     public static void initializeTTSCheck(Activity activity) {
