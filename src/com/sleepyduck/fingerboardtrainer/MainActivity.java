@@ -5,10 +5,9 @@ import com.android.vending.billing.IInAppBillingService;
 import com.purplebrain.adbuddiz.sdk.AdBuddiz;
 import com.sleepyduck.fingerboardtrainer.MainLayout.LayoutState;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.RemoteException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -21,6 +20,11 @@ import android.content.IntentSender.SendIntentException;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,9 +41,6 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MainActivity extends Activity {
     private static final long AD_PAUSE_TIME = 300000;
@@ -62,6 +63,7 @@ public class MainActivity extends Activity {
     private Handler mHandler;
     private boolean mRunning;
     private boolean mDonateAsAction;
+    private boolean mHasRatedApp;
     private Intent mServiceIntent;
     private MainLayout mMainLayout;
     private long mAdTimer = -1;
@@ -143,6 +145,7 @@ public class MainActivity extends Activity {
                         Log.d("JSON RESULT: " + jo.toString());
                         mBillingManager.setHasDonated(true);
                         invalidateOptionsMenu();
+                        askForAppRating();
                         return;
                     }
                 } catch (JSONException e) {
@@ -369,6 +372,7 @@ public class MainActivity extends Activity {
         editor.putInt("repetitions", mRepetitions);
         editor.putInt("rest_time", mRestTime);
         editor.putInt("total_repetitions", mTotalRepetitions);
+        editor.putBoolean("has_rated_app", mHasRatedApp);
         if (!editor.commit()) {
             // Toast.makeText(this, "Failed to save shared preferences",
             // Toast.LENGTH_LONG).show();
@@ -390,6 +394,7 @@ public class MainActivity extends Activity {
                 Integer.valueOf(getString(R.string.initial_rest_time)));
         mTotalRepetitions = prefs.getInt("total_repetitions",
                 Integer.valueOf(getString(R.string.initial_total_repetitions)));
+        mHasRatedApp = prefs.getBoolean("has_rated_app", false);
 
         SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.getDefault());
         mHangTimeButton.setText(sdf.format(mHangTime * 1000));
@@ -505,5 +510,26 @@ public class MainActivity extends Activity {
                 break;
         }
         save();
+    }
+
+    private void askForAppRating() {
+        if (!mHasRatedApp) {
+            final Uri uri = Uri.parse("market://details?id=" + getPackageName());
+            final Intent rateAppIntent = new Intent(Intent.ACTION_VIEW, uri);
+            if (getPackageManager().queryIntentActivities(rateAppIntent, 0).size() > 0) {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.rate_app)
+                        .setMessage(R.string.rate_app_text)
+                        .setPositiveButton(android.R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        mHasRatedApp = true;
+                                        startActivity(rateAppIntent);
+                                    }
+                                }).setNegativeButton(R.string.later, null).setCancelable(true)
+                        .show();
+            }
+        }
     }
 }

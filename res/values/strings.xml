@@ -22,6 +22,9 @@
     <string name="silent">Silent</string>
     <string name="sound">Sound</string>
     <string name="vibrate">Vibrate</string>
+    <string name="rate_app">Rate Application</string>
+    <string name="rate_app_text">Show your support for Fingerboard Trainer by leaving a review on Play Store.</string>
+    <string name="later">Later</string>
     
     <string name="say_start">Start!</string>
     <string name="say_stop">Stop!</string>
