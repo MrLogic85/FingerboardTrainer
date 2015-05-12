@@ -126,7 +126,7 @@ public class MainActivity extends Activity {
 
         mHandler = new Handler();
 
-        AdBuddiz.setPublisherKey("aedf6afb-0fe8-479f-a8a6-c584beba4a32");
+        AdBuddiz.setPublisherKey("5d509af5-ad01-4751-8826-89bb007ea51e");
         AdBuddiz.cacheAds(this);
     }
 
