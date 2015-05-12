@@ -27,7 +27,7 @@ public class HistoryActivity extends Activity {
         Collections.sort(data);
         Collections.reverse(data);
 
-        mListView = (ListView) findViewById(R.id.list_view);
+        mListView = (ListView)findViewById(R.id.list_view);
         mListView.setAdapter(new ArrayAdapter<String>(this, R.layout.list_item, data));
     }
 

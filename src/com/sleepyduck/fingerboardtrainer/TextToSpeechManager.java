@@ -44,12 +44,10 @@ public class TextToSpeechManager {
     private UtteranceProgressListener mUttranceListener = new UtteranceProgressListener() {
 
         @Override
-        public void onStart(String utteranceId) {
-        }
+        public void onStart(String utteranceId) {}
 
         @Override
-        public void onError(String utteranceId) {
-        }
+        public void onError(String utteranceId) {}
 
         @Override
         public void onDone(String text) {

@@ -165,9 +165,7 @@ public class TimerService extends Service {
         switch (notification) {
             case VIBRATE:
                 Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-                vibrator.vibrate(new long[] {
-                        0, 200, 200, 200, 200, 200
-                }, -1);
+                vibrator.vibrate(new long[] { 0, 200, 200, 200, 200, 200 }, -1);
                 break;
             case SOUND:
                 if (mTextToSpeachManager.isActive()) {
@@ -185,9 +183,7 @@ public class TimerService extends Service {
         switch (notification) {
             case VIBRATE:
                 Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-                vibrator.vibrate(new long[] {
-                        0, 400, 600, 400, 600, 400
-                }, -1);
+                vibrator.vibrate(new long[] { 0, 400, 600, 400, 600, 400 }, -1);
                 break;
             case SOUND:
                 if (mTextToSpeachManager.isActive()) {
