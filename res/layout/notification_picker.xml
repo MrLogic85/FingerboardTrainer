@@ -10,10 +10,10 @@
         android:text="@string/silent" />
 
     <RadioButton
-        android:id="@+id/mode_sound"
+        android:id="@+id/mode_voice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sound" />
+        android:text="@string/voice" />
 
     <RadioButton
         android:id="@+id/mode_vibrate"

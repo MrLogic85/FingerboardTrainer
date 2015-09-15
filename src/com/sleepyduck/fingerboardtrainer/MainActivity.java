@@ -247,8 +247,8 @@ public class MainActivity extends Activity {
             case NONE:
                 rb = (RadioButton)picker.findViewById(R.id.mode_silent);
                 break;
-            case SOUND:
-                rb = (RadioButton)picker.findViewById(R.id.mode_sound);
+            case VOICE:
+                rb = (RadioButton)picker.findViewById(R.id.mode_voice);
                 break;
             case VIBRATE:
                 rb = (RadioButton)picker.findViewById(R.id.mode_vibrate);
@@ -262,8 +262,8 @@ public class MainActivity extends Activity {
                     case R.id.mode_silent:
                         meNotification = Notification.NONE;
                         break;
-                    case R.id.mode_sound:
-                        meNotification = Notification.SOUND;
+                    case R.id.mode_voice:
+                        meNotification = Notification.VOICE;
                         TextToSpeechManager.initializeTTSCheck(MainActivity.this);
                         break;
                     case R.id.mode_vibrate:
@@ -399,7 +399,7 @@ public class MainActivity extends Activity {
         Log.d("pre load, mRestTime = " + mRestTime);
         SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
         meNotification = Enum.valueOf(Notification.class,
-                prefs.getString("notification", Notification.SOUND.toString()));
+                prefs.getString("notification", Notification.VOICE.toString()));
         mHangTime = prefs.getInt("hang_time",
                 Integer.valueOf(getString(R.string.initial_hang_time)));
         mPauseTime = prefs.getInt("pause_time",

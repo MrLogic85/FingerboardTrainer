@@ -69,7 +69,7 @@ public class TimerService extends Service {
 
     public void startTimer(final int hangTime, final int pauseTime, final int repetitions,
             final int restTime, final int totalRepetitions, final Notification notification) {
-        if (notification == Notification.SOUND && mTextToSpeachManager.isActive()) {
+        if (notification == Notification.VOICE && mTextToSpeachManager.isActive()) {
             prepareSounds();
         }
         mTimerThread = new TimerThread() {
@@ -148,7 +148,7 @@ public class TimerService extends Service {
                 Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(800);
                 break;
-            case SOUND:
+            case VOICE:
                 if (mTextToSpeachManager.isActive()) {
                     mTextToSpeachManager.say(R.string.say_start);
                 } else {
@@ -166,7 +166,7 @@ public class TimerService extends Service {
                 Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(new long[] { 0, 200, 200, 200, 200, 200 }, -1);
                 break;
-            case SOUND:
+            case VOICE:
                 if (mTextToSpeachManager.isActive()) {
                     mTextToSpeachManager.say(R.string.say_stop);
                 } else {
@@ -184,7 +184,7 @@ public class TimerService extends Service {
                 Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(new long[] { 0, 400, 600, 400, 600, 400 }, -1);
                 break;
-            case SOUND:
+            case VOICE:
                 if (mTextToSpeachManager.isActive()) {
                     mTextToSpeachManager.say(R.string.say_get_ready);
                 } else {
@@ -202,7 +202,7 @@ public class TimerService extends Service {
                 Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(new long[] { 0, 400, 600, 400, 600, 400 }, -1);
                 break;
-            case SOUND:
+            case VOICE:
                 if (mTextToSpeachManager.isActive()) {
                     mTextToSpeachManager.say(R.string.say_good_job);
                 } else {
