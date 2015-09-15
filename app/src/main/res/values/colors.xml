@@ -7,6 +7,8 @@
     <color name="repeat_total_overlay">#80CBC4</color>
     <color name="button_background">#4CAF50</color>
     <color name="button_background_pressed">#B34CAF50</color>
+    <color name="button_pause_background">#FFAB40</color>
+    <color name="button_pause_background_pressed">#B3FFAB40</color>
     <color name="button_text">#FFFFFF</color>
     <color name="text_background">#B2DFDB</color>
     <color name="background">#E8F5E9</color>

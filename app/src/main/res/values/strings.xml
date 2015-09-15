@@ -18,6 +18,8 @@
     <string name="total_repetitions">Set</string>
     <string name="start">START</string>
     <string name="stop">STOP</string>
+    <string name="pause">PAUSE</string>
+    <string name="resume">RESUME</string>
     <string name="title_activity_history">History</string>
     <string name="silent">Silent</string>
     <string name="voice">Voice</string>
@@ -33,5 +35,9 @@
     <string name="say_stop">Stop!</string>
     <string name="say_get_ready">Get ready!</string>
     <string name="say_good_job">Good job!</string>
+
+    <string name="adbuddiz_id">5d509af5-ad01-4751-8826-89bb007ea51e</string>
+    <string name="banner_ad_unit_id">ca-app-pub-1586949106208904/1438270076</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-1586949106208904/3554131675</string>
 
 </resources>

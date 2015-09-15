@@ -2,6 +2,10 @@
 package com.sleepyduck.fingerboardtrainer;
 
 import com.android.vending.billing.IInAppBillingService;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.purplebrain.adbuddiz.sdk.AdBuddiz;
 import com.sleepyduck.fingerboardtrainer.MainLayout.LayoutState;
 
@@ -50,6 +54,7 @@ public class MainActivity extends Activity {
     private Notification meNotification;
     private TextView mTextView;
     private Button mStartButton;
+    private Button mPauseButton;
     private int mHangTime;
     private int mRestTime;
     private int mRepetitions;
@@ -68,6 +73,13 @@ public class MainActivity extends Activity {
     private MainLayout mMainLayout;
     private long mAdTimer = -1;
 
+    private InterstitialAd mInterstitialAd;
+    private AdListener mAdListener = new AdListener() {
+        public void onAdClosed() {
+            requestNewInterstitial();
+        }
+    };
+
     private TimerBinder mBinder;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -80,7 +92,7 @@ public class MainActivity extends Activity {
 
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d("onServiceConnected");
-            mBinder = (TimerBinder)service;
+            mBinder = (TimerBinder) service;
             mBinder.getService().setMainActivity(MainActivity.this);
             mStartButton.setEnabled(true);
         }
@@ -117,20 +129,25 @@ public class MainActivity extends Activity {
         billingServiceIntent.setPackage("com.android.vending");
         bindService(billingServiceIntent, mBillingServiceConn, Context.BIND_AUTO_CREATE);
 
-        mMainLayout = (MainLayout)findViewById(R.id.main_layout);
-        mTextView = (TextView)findViewById(R.id.textView);
-        mStartButton = (Button)findViewById(R.id.start_button);
-        mHangTimeButton = (Button)findViewById(R.id.hang_time);
-        mPauseTimeButton = (Button)findViewById(R.id.pause_time);
-        mRepetitionsButton = (Button)findViewById(R.id.repetitions);
-        mRestTimeButton = (Button)findViewById(R.id.rest_time);
-        mTotalRepetitionsButton = (Button)findViewById(R.id.total_repetitions);
+        mMainLayout = (MainLayout) findViewById(R.id.main_layout);
+        mTextView = (TextView) findViewById(R.id.textView);
+        mStartButton = (Button) findViewById(R.id.start_button);
+        mPauseButton = (Button) findViewById(R.id.pause_button);
+        mHangTimeButton = (Button) findViewById(R.id.hang_time);
+        mPauseTimeButton = (Button) findViewById(R.id.pause_time);
+        mRepetitionsButton = (Button) findViewById(R.id.repetitions);
+        mRestTimeButton = (Button) findViewById(R.id.rest_time);
+        mTotalRepetitionsButton = (Button) findViewById(R.id.total_repetitions);
         load();
 
         mHandler = new Handler();
 
-        AdBuddiz.setPublisherKey("5d509af5-ad01-4751-8826-89bb007ea51e");
+        AdBuddiz.setPublisherKey(getString(R.string.adbuddiz_id));
         AdBuddiz.cacheAds(this);
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+        requestNewInterstitial();
     }
 
     @Override
@@ -237,21 +254,39 @@ public class MainActivity extends Activity {
 
     public void activateInAppPurchases() {
         invalidateOptionsMenu();
+        activateBannerAds();
+    }
+
+    private void activateBannerAds() {
+        AdView adView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("E4A3CE18325B125C0A1237F5F63630AA")
+                .addTestDevice("F825AA50BD874BE777FAC34840E3B104")
+                .build();
+        adView.loadAd(adRequest);
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("E4A3CE18325B125C0A1237F5F63630AA")
+                .addTestDevice("F825AA50BD874BE777FAC34840E3B104")
+                .build();
+        mInterstitialAd.loadAd(adRequest);
     }
 
     private void showNotificationPicker() {
-        final RadioGroup picker = (RadioGroup)View
+        final RadioGroup picker = (RadioGroup) View
                 .inflate(this, R.layout.notification_picker, null);
         RadioButton rb = null;
         switch (meNotification) {
             case NONE:
-                rb = (RadioButton)picker.findViewById(R.id.mode_silent);
+                rb = (RadioButton) picker.findViewById(R.id.mode_silent);
                 break;
             case VOICE:
-                rb = (RadioButton)picker.findViewById(R.id.mode_voice);
+                rb = (RadioButton) picker.findViewById(R.id.mode_voice);
                 break;
             case VIBRATE:
-                rb = (RadioButton)picker.findViewById(R.id.mode_vibrate);
+                rb = (RadioButton) picker.findViewById(R.id.mode_vibrate);
                 break;
         }
         rb.setChecked(true);
@@ -306,13 +341,28 @@ public class MainActivity extends Activity {
             mRunning = true;
             mBinder.getService().startTimer(mHangTime, mPauseTime, mRepetitions, mRestTime,
                     mTotalRepetitions, meNotification);
-            mMainLayout.setLayoutState(LayoutState.TEXT_FOCUS);
+            mMainLayout.setLayoutState(LayoutState.RUNNING);
+        }
+    }
+
+    public void onPauseClicked(View view) {
+        if (mRunning) {
+            if (mBinder != null) {
+                if (!mBinder.getService().isPaused()) {
+                    mBinder.getService().pauseTimer();
+                    mPauseButton.setText(R.string.resume);
+                } else {
+                    mBinder.getService().resumeTimer();
+                    mPauseButton.setText(R.string.pause);
+                }
+            }
         }
     }
 
     private void stop() {
         if (mBinder != null) {
             mStartButton.setText(R.string.start);
+            mPauseButton.setText(R.string.pause);
             mRunning = false;
             mBinder.getService().stopTimer();
             setText("");
@@ -337,7 +387,12 @@ public class MainActivity extends Activity {
                 mHandler.postDelayed(new Runnable() {
                     public void run() {
                         if (!isFinishing()) {
-                            AdBuddiz.showAd(MainActivity.this);
+                            //AdBuddiz.showAd(MainActivity.this);
+                            if (mInterstitialAd.isLoaded()) {
+                                mInterstitialAd.show();
+                            } else {
+                                mAdTimer = -1;
+                            }
                         }
                     }
                 }, timeMillis);
@@ -351,7 +406,7 @@ public class MainActivity extends Activity {
     }
 
     public void onTrainingCompleted(final int hangTime, final int pauseTime, final int repetitions,
-            final int restTime, final int totalRepetitions) {
+                                    final int restTime, final int totalRepetitions) {
         mHandler.post(new Runnable() {
             public void run() {
                 stop();
@@ -424,8 +479,8 @@ public class MainActivity extends Activity {
 
     public void onChangeTimeClicked(final View view) {
         final View picker = View.inflate(this, R.layout.minutes_seconds_picker, null);
-        final NumberPicker minutes = (NumberPicker)picker.findViewById(R.id.time_picker_minutes);
-        final NumberPicker seconds = (NumberPicker)picker.findViewById(R.id.time_picker_seconds);
+        final NumberPicker minutes = (NumberPicker) picker.findViewById(R.id.time_picker_minutes);
+        final NumberPicker seconds = (NumberPicker) picker.findViewById(R.id.time_picker_seconds);
         minutes.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         seconds.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         minutes.setMaxValue(60);
@@ -438,7 +493,7 @@ public class MainActivity extends Activity {
                 .setPositiveButton(android.R.string.yes, new OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-                        updateTime((Button)view, minutes.getValue() * 60 + seconds.getValue());
+                        updateTime((Button) view, minutes.getValue() * 60 + seconds.getValue());
                     }
                 }).show();
     }
@@ -453,7 +508,7 @@ public class MainActivity extends Activity {
                 .setPositiveButton(android.R.string.yes, new OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-                        updateValue((Button)view, picker.getValue());
+                        updateValue((Button) view, picker.getValue());
                     }
                 }).show();
     }
@@ -496,7 +551,7 @@ public class MainActivity extends Activity {
 
     private void updateTime(Button view, int seconds) {
         SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.getDefault());
-        ((Button)view).setText(sdf.format(seconds * 1000));
+        ((Button) view).setText(sdf.format(seconds * 1000));
         switch (view.getId()) {
             case R.id.hang_time:
                 mHangTime = seconds;
@@ -514,7 +569,7 @@ public class MainActivity extends Activity {
     }
 
     private void updateValue(Button view, int value) {
-        ((Button)view).setText("" + value);
+        ((Button) view).setText("" + value);
         switch (view.getId()) {
             case R.id.repetitions:
                 mRepetitions = value;

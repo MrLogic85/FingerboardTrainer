@@ -75,23 +75,23 @@ public class TimerService extends Service {
         mTimerThread = new TimerThread() {
             @Override
             public void run() {
-                for (int time = 3; time > 0 && mRunning; --time) {
+                for (int time = 3; time > 0 && isRunning(); --time) {
                     setText("Start in " + time + "s");
                     sleepFor(1000);
                 }
                 int totalRep = totalRepetitions;
                 int rep;
-                while ((totalRep--) > 0 && mRunning) {
+                while ((totalRep--) > 0 && isRunning()) {
                     rep = repetitions;
-                    while ((rep--) > 0 && mRunning) {
+                    while ((rep--) > 0 && isRunning()) {
                         notifyHang(notification);
-                        for (int time = hangTime; time > 0 && mRunning; --time) {
+                        for (int time = hangTime; time > 0 && isRunning(); --time) {
                             setText("Round " + (repetitions - rep) + "/" + repetitions + " : Set "
                                     + (totalRepetitions - totalRep) + "/" + totalRepetitions
                                     + "\nHang " + time + "s");
                             sleepFor(1000);
                         }
-                        if (mRunning) {
+                        if (isRunning()) {
                             if (rep == 0 && totalRep == 0) {
                                 notifyDone(notification);
                             } else {
@@ -99,7 +99,7 @@ public class TimerService extends Service {
                             }
                         }
                         if (rep > 0) {
-                            for (int time = pauseTime; time > 0 && mRunning; --time) {
+                            for (int time = pauseTime; time > 0 && isRunning(); --time) {
                                 setText("Round " + (repetitions - rep) + "/" + repetitions
                                         + " : Set " + (totalRepetitions - totalRep) + "/"
                                         + totalRepetitions + "\nPause " + time + "s");
@@ -109,20 +109,20 @@ public class TimerService extends Service {
                     }
                     if (totalRep > 0) {
                         Calendar cal = Calendar.getInstance();
-                        for (int time = restTime; time > 0 && mRunning; --time) {
+                        for (int time = restTime; time > 0 && isRunning(); --time) {
                             cal.setTimeInMillis(time * 1000);
                             setText("Round " + (repetitions - rep - 1) + "/" + repetitions
                                     + " : Set " + (totalRepetitions - totalRep) + "/"
                                     + totalRepetitions + "\nRest " + cal.get(Calendar.MINUTE)
                                     + "m " + cal.get(Calendar.SECOND) + "s");
                             sleepFor(1000);
-                            if (time == 4 && mRunning) {
+                            if (time == 4 && isRunning()) {
                                 notifyWarn(notification);
                             }
                         }
                     }
                 }
-                if (mRunning) {
+                if (isRunning()) {
                     trainingCompleted(hangTime, pauseTime, repetitions, restTime, totalRepetitions);
                 }
             }
@@ -133,7 +133,32 @@ public class TimerService extends Service {
     public void stopTimer() {
         if (mTimerThread != null) {
             mTimerThread.mRunning = false;
+            if (isPaused()) {
+                resumeTimer();
+            }
         }
+    }
+
+    public void pauseTimer() {
+        if (mTimerThread != null) {
+            mTimerThread.mPaused = true;
+        }
+    }
+
+    public void resumeTimer() {
+        if (mTimerThread != null) {
+            mTimerThread.mPaused = false;
+            synchronized (mTimerThread) {
+                mTimerThread.notifyAll();
+            }
+        }
+    }
+
+    public boolean isPaused() {
+        if (mTimerThread != null) {
+            return mTimerThread.mPaused;
+        }
+        return false;
     }
 
     protected void setText(String string) {
@@ -272,11 +297,24 @@ public class TimerService extends Service {
 
     private class TimerThread extends Thread {
         boolean mRunning = false;
+        boolean mPaused = false;
 
         @Override
         public synchronized void start() {
             mRunning = true;
             super.start();
+        }
+
+        public boolean isRunning() {
+            synchronized (mTimerThread) {
+                while (mPaused) {
+                    try {
+                        mTimerThread.wait();
+                    } catch (InterruptedException ignore) {
+                    }
+                }
+            }
+            return mRunning;
         }
     }
 }

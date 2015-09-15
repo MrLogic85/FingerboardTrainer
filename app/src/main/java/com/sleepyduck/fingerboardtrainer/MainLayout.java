@@ -15,7 +15,7 @@ public class MainLayout extends ViewGroup {
     private LayoutTransition mLayoutTransition;
 
     enum LayoutState {
-        NORMAL, TEXT_FOCUS
+        NORMAL, RUNNING
     }
 
     public MainLayout(Context context) {
@@ -46,8 +46,8 @@ public class MainLayout extends ViewGroup {
             case NORMAL:
                 onNormalMeasure(widthMeasureSpec, heightMeasureSpec);
                 break;
-            case TEXT_FOCUS:
-                onTextFocusMeasure(widthMeasureSpec, heightMeasureSpec);
+            case RUNNING:
+                onRunningMeasure(widthMeasureSpec, heightMeasureSpec);
                 break;
             default:
                 break;
@@ -83,6 +83,12 @@ public class MainLayout extends ViewGroup {
                             MeasureSpec.EXACTLY);
                     view.measure(measuredWidth, measuredHeight);
                     break;
+                case R.id.pause_button:
+                    measuredWidth = MeasureSpec.makeMeasureSpec(0, MeasureSpec.EXACTLY);
+                    measuredHeight = MeasureSpec.makeMeasureSpec((int)(unitSize * 0.5),
+                            MeasureSpec.EXACTLY);
+                    view.measure(measuredWidth, measuredHeight);
+                    break;
                 case R.id.textView:
                     measuredWidth = MeasureSpec.makeMeasureSpec(unitSize * 2, MeasureSpec.EXACTLY);
                     measuredHeight = MeasureSpec.makeMeasureSpec((int)(height - unitSize * 3.5),
@@ -93,7 +99,7 @@ public class MainLayout extends ViewGroup {
         }
     }
 
-    private void onTextFocusMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    private void onRunningMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         int unitSize = Math.min(width / 3, height / 4);
@@ -117,7 +123,13 @@ public class MainLayout extends ViewGroup {
                     view.measure(measuredWidth, measuredHeight);
                     break;
                 case R.id.start_button:
-                    measuredWidth = MeasureSpec.makeMeasureSpec(unitSize * 3, MeasureSpec.EXACTLY);
+                    measuredWidth = MeasureSpec.makeMeasureSpec(unitSize * 2, MeasureSpec.EXACTLY);
+                    measuredHeight = MeasureSpec.makeMeasureSpec((int)(unitSize * 0.5),
+                            MeasureSpec.EXACTLY);
+                    view.measure(measuredWidth, measuredHeight);
+                    break;
+                case R.id.pause_button:
+                    measuredWidth = MeasureSpec.makeMeasureSpec(unitSize, MeasureSpec.EXACTLY);
                     measuredHeight = MeasureSpec.makeMeasureSpec((int)(unitSize * 0.5),
                             MeasureSpec.EXACTLY);
                     view.measure(measuredWidth, measuredHeight);
@@ -138,8 +150,8 @@ public class MainLayout extends ViewGroup {
             case NORMAL:
                 onNormalLayout(changed, left, top, right, bottom);
                 break;
-            case TEXT_FOCUS:
-                onTextFocusLayout(changed, left, top, right, bottom);
+            case RUNNING:
+                onRunningLayout(changed, left, top, right, bottom);
                 break;
             default:
                 break;
@@ -177,6 +189,10 @@ public class MainLayout extends ViewGroup {
                     view.layout(widthPadding, unitSize * 3, widthPadding + unitSize * 2,
                             (int)(unitSize * 3.5));
                     break;
+                case R.id.pause_button:
+                    view.layout(widthPadding + unitSize * 2, unitSize * 3, widthPadding + unitSize * 2,
+                            (int)(unitSize * 3.5));
+                    break;
                 case R.id.textView:
                     view.layout(widthPadding, (int)(unitSize * 3.5), widthPadding + unitSize * 2,
                             height);
@@ -185,7 +201,7 @@ public class MainLayout extends ViewGroup {
         }
     }
 
-    private void onTextFocusLayout(boolean changed, int left, int top, int right, int bottom) {
+    private void onRunningLayout(boolean changed, int left, int top, int right, int bottom) {
         int width = right - left;
         int height = bottom - top;
         int unitSize = Math.min(width / 3, height / 4);
@@ -213,7 +229,11 @@ public class MainLayout extends ViewGroup {
                             unitSize * 2);
                     break;
                 case R.id.start_button:
-                    view.layout(widthPadding, unitSize * 2, widthPadding + unitSize * 3,
+                    view.layout(widthPadding, unitSize * 2, widthPadding + unitSize * 2,
+                            (int)(unitSize * 2.5));
+                    break;
+                case R.id.pause_button:
+                    view.layout(widthPadding + unitSize * 2, unitSize * 2, widthPadding + unitSize * 3,
                             (int)(unitSize * 2.5));
                     break;
                 case R.id.textView:

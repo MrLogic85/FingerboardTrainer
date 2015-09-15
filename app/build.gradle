@@ -23,5 +23,6 @@ android {
 }
 
 dependencies {
-    compile files('libs/AdBuddiz-3.0.18.jar')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.google.android.gms:play-services-ads:7.5.0'
 }

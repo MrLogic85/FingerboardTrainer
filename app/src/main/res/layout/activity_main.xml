@@ -1,85 +1,112 @@
-<com.sleepyduck.fingerboardtrainer.MainLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
     android:keepScreenOn="true"
     android:orientation="vertical"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/hang_time"
+    <com.sleepyduck.fingerboardtrainer.MainLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/hang_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/hang"
+            android:gravity="center"
+            android:onClick="onChangeTimeClicked"
+            android:text="@string/initial_hang_time"
+            android:textSize="@dimen/text_size" />
+
+        <Button
+            android:id="@+id/pause_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/pause"
+            android:gravity="center"
+            android:onClick="onChangeTimeClicked"
+            android:selectAllOnFocus="true"
+            android:text="@string/initial_pause_time"
+            android:textSize="@dimen/text_size" />
+
+        <Button
+            android:id="@+id/repetitions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/repeat"
+            android:gravity="center"
+            android:onClick="onChangeValueClicked"
+            android:selectAllOnFocus="true"
+            android:text="@string/initial_repetitions"
+            android:textSize="@dimen/text_size" />
+
+        <Button
+            android:id="@+id/rest_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rest"
+            android:gravity="center"
+            android:onClick="onChangeTimeClicked"
+            android:selectAllOnFocus="true"
+            android:text="@string/initial_rest_time"
+            android:textSize="@dimen/text_size" />
+
+        <Button
+            android:id="@+id/total_repetitions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/repeat_total"
+            android:gravity="center"
+            android:onClick="onChangeValueClicked"
+            android:selectAllOnFocus="true"
+            android:text="@string/initial_total_repetitions"
+            android:textSize="@dimen/text_size" />
+
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:gravity="center"
+            android:onClick="onStartClicked"
+            android:text="@string/start"
+            android:textColor="@color/button_text"
+            android:textSize="@dimen/text_size" />
+
+        <Button
+            android:id="@+id/pause_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_accent"
+            android:gravity="center"
+            android:onClick="onPauseClicked"
+            android:text="@string/pause"
+            android:textColor="@color/button_text"
+            android:textSize="@dimen/text_size"/>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/text_background"
+            android:gravity="center"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+            android:textSize="@dimen/text_size" />
+
+    </com.sleepyduck.fingerboardtrainer.MainLayout>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/hang"
-        android:gravity="center"
-        android:onClick="onChangeTimeClicked"
-        android:text="@string/initial_hang_time"
-        android:textSize="@dimen/text_size" />
-
-    <Button
-        android:id="@+id/pause_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/pause"
-        android:gravity="center"
-        android:onClick="onChangeTimeClicked"
-        android:selectAllOnFocus="true"
-        android:text="@string/initial_pause_time"
-        android:textSize="@dimen/text_size" />
-
-    <Button
-        android:id="@+id/repetitions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/repeat"
-        android:gravity="center"
-        android:onClick="onChangeValueClicked"
-        android:selectAllOnFocus="true"
-        android:text="@string/initial_repetitions"
-        android:textSize="@dimen/text_size" />
-
-    <Button
-        android:id="@+id/rest_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rest"
-        android:gravity="center"
-        android:onClick="onChangeTimeClicked"
-        android:selectAllOnFocus="true"
-        android:text="@string/initial_rest_time"
-        android:textSize="@dimen/text_size" />
-
-    <Button
-        android:id="@+id/total_repetitions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/repeat_total"
-        android:gravity="center"
-        android:onClick="onChangeValueClicked"
-        android:selectAllOnFocus="true"
-        android:text="@string/initial_total_repetitions"
-        android:textSize="@dimen/text_size" />
-
-    <Button
-        android:id="@+id/start_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button"
-        android:gravity="center"
-        android:onClick="onStartClicked"
-        android:text="@string/start"
-        android:textColor="@color/button_text"
-        android:textSize="@dimen/text_size" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@color/text_background"
-        android:gravity="center"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-        android:textSize="@dimen/text_size" />
-
-</com.sleepyduck.fingerboardtrainer.MainLayout>
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id" />
+</RelativeLayout>
