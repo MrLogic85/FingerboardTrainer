@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:drawable="@drawable/pause_background"/>
+    <item>
+        <color android:color="@color/pause_overlay" />
+    </item>
+
+</layer-list><!-- From: file:/media/repos/StudioProjects/FingerboardTrainer/app/src/main/res/drawable/pause.xml -->

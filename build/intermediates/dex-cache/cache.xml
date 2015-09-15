@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/media/repos/StudioProjects/FingerboardTrainer/app/libs/AdBuddiz-3.0.18.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="8524b9027cfe48ad249fa71edfb9add23ae28cba">
+        <dex dex="/media/repos/StudioProjects/FingerboardTrainer/app/build/intermediates/pre-dexed/debug/AdBuddiz-3.0.18-1ae56398500b335d3f795b86e37106f97f222509.jar" />
+    </item>
+
+</items>
