@@ -19,7 +19,7 @@ public class BillingManager {
 
     private ArrayList<BillingItem> mBillingItems = new ArrayList<BillingManager.BillingItem>();
 
-    private boolean mHasDonated = false;
+    private boolean mHasDonated = true; // Default to true in order to not show ads when there is no internet
 
     public BillingManager(MainActivity activity, IInAppBillingService service) {
         mActivity = activity;

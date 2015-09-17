@@ -11,11 +11,14 @@ public class MainLayout extends ViewGroup {
     public static final String TAG = "fingerboardtrainer";
 
     private LayoutState mLayoutState = LayoutState.NORMAL;
-
-    private LayoutTransition mLayoutTransition;
+    private NavMenuState mNavMenuState = NavMenuState.CLOSED;
 
     enum LayoutState {
         NORMAL, RUNNING
+    }
+
+    enum NavMenuState {
+        OPEN, CLOSED
     }
 
     public MainLayout(Context context) {
@@ -34,9 +37,9 @@ public class MainLayout extends ViewGroup {
     }
 
     private void setup() {
-        mLayoutTransition = new LayoutTransition();
-        mLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
-        setLayoutTransition(mLayoutTransition);
+        LayoutTransition layoutTransition = new LayoutTransition();
+        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+        setLayoutTransition(layoutTransition);
     }
 
     @Override
@@ -49,9 +52,8 @@ public class MainLayout extends ViewGroup {
             case RUNNING:
                 onRunningMeasure(widthMeasureSpec, heightMeasureSpec);
                 break;
-            default:
-                break;
         }
+        onNavMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     private void onNormalMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -144,6 +146,13 @@ public class MainLayout extends ViewGroup {
         }
     }
 
+    private void onNavMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int end = (int) getResources().getDimension(R.dimen.menu_width);
+        findViewById(R.id.nav_menu).measure(MeasureSpec.makeMeasureSpec(end, MeasureSpec.EXACTLY), heightMeasureSpec);
+        findViewById(R.id.navManuCloseButton).measure(MeasureSpec.makeMeasureSpec(width-end, MeasureSpec.EXACTLY), heightMeasureSpec);
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         switch (mLayoutState) {
@@ -154,6 +163,14 @@ public class MainLayout extends ViewGroup {
                 onRunningLayout(changed, left, top, right, bottom);
                 break;
             default:
+                break;
+        }
+        switch (mNavMenuState) {
+            case OPEN:
+                onNavMenuOpenLayout(changed, left, top, right, bottom);
+                break;
+            case CLOSED:
+                onNavMenuClosedLayout(changed, left, top, right, bottom);
                 break;
         }
     }
@@ -244,11 +261,34 @@ public class MainLayout extends ViewGroup {
         }
     }
 
+    private void onNavMenuOpenLayout(boolean changed, int left, int top, int right, int bottom) {
+        int end = (int)(getResources().getDimension(R.dimen.menu_width));
+        findViewById(R.id.nav_menu).layout(0, top, end, bottom);
+        findViewById(R.id.navManuCloseButton).layout(end, top, right, bottom);
+    }
+
+    private void onNavMenuClosedLayout(boolean changed, int left, int top, int right, int bottom) {
+        int end = (int)(getResources().getDimension(R.dimen.menu_width));
+        findViewById(R.id.nav_menu).layout(-end, top, 0, bottom);
+        findViewById(R.id.navManuCloseButton).layout(end - right, top, 0, bottom);
+    }
+
     public void setLayoutState(LayoutState layoutState) {
         if (layoutState != mLayoutState) {
             mLayoutState = layoutState;
-            invalidate();
+            requestLayout();
         }
+    }
+
+    public void setNavMenu(NavMenuState navMenuState) {
+        if (navMenuState != mNavMenuState) {
+            mNavMenuState = navMenuState;
+            requestLayout();
+        }
+    }
+
+    public NavMenuState getNavMenuState() {
+        return mNavMenuState;
     }
 
 }

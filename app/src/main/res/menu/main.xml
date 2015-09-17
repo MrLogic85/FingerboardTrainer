@@ -1,14 +1,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/change_name"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_change_name" />
+    <item
+        android:id="@+id/new_workout"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_add_new" />
+    <item
         android:id="@+id/action_notification"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_notification"/>
-    <item
-        android:id="@+id/action_history"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_history"/>
 
 </menu>

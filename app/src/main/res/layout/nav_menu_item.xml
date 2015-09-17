@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/menu_item_height"
+    android:paddingLeft="@dimen/menu_item_padding_left"
+    android:gravity="center_vertical"
+    android:text="TEST"
+    android:background="@drawable/button_nav_menu"
+    android:textSize="@dimen/menu_item_text_size"
+    android:textColor="@color/nav_menu_item_text_color"
+    android:fontFamily="roboto"/>

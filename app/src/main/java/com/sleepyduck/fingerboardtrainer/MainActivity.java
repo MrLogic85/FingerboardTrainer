@@ -29,10 +29,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -41,8 +48,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -72,6 +81,9 @@ public class MainActivity extends Activity {
     private Intent mServiceIntent;
     private MainLayout mMainLayout;
     private long mAdTimer = -1;
+    private List<WorkoutData> mWorkoutDataList;
+    private List<String> mNavMenuListItems;
+    private ListView mNavMenu;
 
     private InterstitialAd mInterstitialAd;
     private AdListener mAdListener = new AdListener() {
@@ -138,6 +150,9 @@ public class MainActivity extends Activity {
         mRepetitionsButton = (Button) findViewById(R.id.repetitions);
         mRestTimeButton = (Button) findViewById(R.id.rest_time);
         mTotalRepetitionsButton = (Button) findViewById(R.id.total_repetitions);
+
+        setupActionBar();
+        setupNavMenu();
         load();
 
         mHandler = new Handler();
@@ -148,6 +163,24 @@ public class MainActivity extends Activity {
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
         requestNewInterstitial();
+    }
+
+    private void setupActionBar() {
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setupNavMenu() {
+        mWorkoutDataList = new ArrayList<>();
+        mNavMenuListItems = new ArrayList<>();
+        ArrayAdapter<String> mNavMenuAdapter = new ArrayAdapter<>(this, R.layout.nav_menu_item, mNavMenuListItems);
+        mNavMenu = (ListView) findViewById(R.id.nav_menu);
+        mNavMenu.setAdapter(mNavMenuAdapter);
+        mNavMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectWorkout(position);
+            }
+        });
     }
 
     @Override
@@ -211,7 +244,10 @@ public class MainActivity extends Activity {
             startMain.addCategory(Intent.CATEGORY_HOME);
             startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(startMain);
+        } else if (mMainLayout.getNavMenuState() == MainLayout.NavMenuState.OPEN) {
+            mMainLayout.setNavMenu(MainLayout.NavMenuState.CLOSED);
         } else {
+            save();
             finish();
         }
     }
@@ -235,8 +271,11 @@ public class MainActivity extends Activity {
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_history:
-                startActivity(new Intent(this, HistoryActivity.class));
+            case R.id.change_name:
+                changeCurrentWorkoutName();
+                return true;
+            case R.id.new_workout:
+                createNewWorkout();
                 return true;
             case R.id.action_notification:
                 showNotificationPicker();
@@ -246,6 +285,93 @@ public class MainActivity extends Activity {
                 return true;
         }
         return super.onMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                showNavMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void createNewWorkout() {
+        final WorkoutData data = new WorkoutData();
+        data.mHangTime = Integer.valueOf(getString(R.string.initial_hang_time));
+        data.mPauseTime = Integer.valueOf(getString(R.string.initial_pause_time));
+        data.mRepetitions = Integer.valueOf(getString(R.string.initial_repetitions));
+        data.mRestTime = Integer.valueOf(getString(R.string.initial_rest_time));
+        data.mTotalRepetitions = Integer.valueOf(getString(R.string.initial_total_repetitions));
+        data.mName = getString(R.string.initial_training_name);
+
+        final EditText et = new EditText(this);
+        et.setText(data.mName);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.action_change_name)
+                .setView(et)
+                .setCancelable(true)
+                .setNegativeButton(android.R.string.cancel, new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton(android.R.string.ok, new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        data.mName = et.getText().toString();
+                        mWorkoutDataList.add(data);
+                        mNavMenuListItems.add(data.mName);
+                        getActionBar().setTitle(data.mName);
+                        selectWorkout(mNavMenuListItems.size()-1);
+                        save();
+                    }
+                })
+                .show();
+    }
+
+    private void selectWorkout(int id) {
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.getDefault());
+        WorkoutData data = mWorkoutDataList.get(id);
+        mHangTimeButton.setText(sdf.format(data.mHangTime * 1000));
+        mPauseTimeButton.setText(sdf.format(data.mPauseTime * 1000));
+        mRepetitionsButton.setText(String.valueOf(data.mRepetitions));
+        mRestTimeButton.setText(sdf.format(data.mRestTime * 1000));
+        mTotalRepetitionsButton.setText(String.valueOf(data.mTotalRepetitions));
+        getActionBar().setTitle(data.mName);
+        mNavMenu.setItemChecked(id, true);
+
+    }
+
+    private void changeCurrentWorkoutName() {
+        final EditText et = new EditText(this);
+        final int currentWorkout = mNavMenu.getCheckedItemPosition();
+        et.setText(mWorkoutDataList.get(currentWorkout).mName);
+        et.setHint(mWorkoutDataList.get(currentWorkout).mName);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.action_change_name)
+                .setView(et)
+                .setCancelable(true)
+                .setNegativeButton(android.R.string.cancel, new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton(android.R.string.ok, new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        WorkoutData data = mWorkoutDataList.get(currentWorkout);
+                        data.mName = et.getText().toString();
+                        mNavMenuListItems.set(currentWorkout, data.mName);
+                        getActionBar().setTitle(data.mName);
+                        save();
+                    }
+                })
+                .show();
     }
 
     public void activateInAppPurchases() {
@@ -331,7 +457,6 @@ public class MainActivity extends Activity {
     }
 
     private void start() {
-        Log.d("start, mBinder = " + mBinder);
         if (mBinder != null) {
             mStartButton.setText(R.string.stop);
             mRunning = true;
@@ -365,6 +490,18 @@ public class MainActivity extends Activity {
             mMainLayout.setLayoutState(LayoutState.NORMAL);
         }
         showAd(2000);
+    }
+
+    public void onCloseNavMenuClicked(View view) {
+        hideNavMenu();
+    }
+
+    private void showNavMenu() {
+        mMainLayout.setNavMenu(MainLayout.NavMenuState.OPEN);
+    }
+
+    private void hideNavMenu() {
+        mMainLayout.setNavMenu(MainLayout.NavMenuState.CLOSED);
     }
 
     public void setText(final String text) {
@@ -433,44 +570,108 @@ public class MainActivity extends Activity {
 
     private void save() {
         Editor editor = getSharedPreferences("shared_prefs", MODE_PRIVATE).edit();
+
+        //Global prefs
         editor.putString("notification", meNotification.toString());
-        editor.putInt("hang_time", mHangTime);
-        editor.putInt("pause_time", mPauseTime);
-        editor.putInt("repetitions", mRepetitions);
-        editor.putInt("rest_time", mRestTime);
-        editor.putInt("total_repetitions", mTotalRepetitions);
         editor.putBoolean("has_rated_app", mHasRatedApp);
-        if (!editor.commit()) {
-            // Toast.makeText(this, "Failed to save shared preferences",
-            // Toast.LENGTH_LONG).show();
+        editor.putInt("save_version", 1);
+        editor.putInt("current_workout", mNavMenu.getCheckedItemPosition());
+
+        //Workout
+        editor.putInt("workout_count", mWorkoutDataList.size());
+        WorkoutData data;
+        for (int i = 0; i < mWorkoutDataList.size(); ++i) {
+            data = mWorkoutDataList.get(i);
+            editor.putInt("hang_time_"+i, data.mHangTime);
+            editor.putInt("pause_time_"+i, data.mPauseTime);
+            editor.putInt("repetitions_"+i, data.mRepetitions);
+            editor.putInt("rest_time_"+i, data.mRestTime);
+            editor.putInt("total_repetitions_" + i, data.mTotalRepetitions);
+            editor.putString("name_"+i, data.mName);
         }
+
+        editor.commit();
     }
 
     private void load() {
-        Log.d("pre load, mRestTime = " + mRestTime);
         SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
-        meNotification = Enum.valueOf(Notification.class,
-                prefs.getString("notification", Notification.VOICE.toString()));
-        mHangTime = prefs.getInt("hang_time",
-                Integer.valueOf(getString(R.string.initial_hang_time)));
-        mPauseTime = prefs.getInt("pause_time",
-                Integer.valueOf(getString(R.string.initial_pause_time)));
-        mRepetitions = prefs.getInt("repetitions",
-                Integer.valueOf(getString(R.string.initial_repetitions)));
-        mRestTime = prefs.getInt("rest_time",
-                Integer.valueOf(getString(R.string.initial_rest_time)));
-        mTotalRepetitions = prefs.getInt("total_repetitions",
-                Integer.valueOf(getString(R.string.initial_total_repetitions)));
+
+        if (prefs.getInt("save_version", 0) < 1) {
+            loadOld(prefs);
+            return;
+        }
+
+        try {
+            meNotification = Enum.valueOf(Notification.class,
+                    prefs.getString("notification", Notification.VOICE.toString()));
+        } catch (Exception e) {
+            meNotification = Notification.VOICE;
+        }
+        mHasRatedApp = prefs.getBoolean("has_rated_app", false);
+        int workoutCount = prefs.getInt("workout_count", 1);
+        int currentWorkout = prefs.getInt("current_workout", 0);
+
+        mWorkoutDataList.clear();
+        mNavMenuListItems.clear();
+        WorkoutData data;
+        for (int i = 0; i < workoutCount; ++i) {
+            data = new WorkoutData();
+            data.mHangTime = prefs.getInt("hang_time_"+i,
+                    Integer.valueOf(getString(R.string.initial_hang_time)));
+            data.mPauseTime = prefs.getInt("pause_time_"+i,
+                    Integer.valueOf(getString(R.string.initial_pause_time)));
+            data.mRepetitions = prefs.getInt("repetitions_"+i,
+                    Integer.valueOf(getString(R.string.initial_repetitions)));
+            data.mRestTime = prefs.getInt("rest_time_"+i,
+                    Integer.valueOf(getString(R.string.initial_rest_time)));
+            data.mTotalRepetitions = prefs.getInt("total_repetitions_"+i,
+                    Integer.valueOf(getString(R.string.initial_total_repetitions)));
+            data.mName = prefs.getString("name_" + i, getString(R.string.initial_training_name));
+            mWorkoutDataList.add(data);
+            mNavMenuListItems.add(data.mName);
+        }
+
+        selectWorkout(currentWorkout);
+    }
+
+    private void loadOld(SharedPreferences prefs) {
+        try {
+            meNotification = Enum.valueOf(Notification.class,
+                    prefs.getString("notification", Notification.VOICE.toString()));
+        } catch (Exception e) {
+            meNotification = Notification.VOICE;
+        }
         mHasRatedApp = prefs.getBoolean("has_rated_app", false);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.getDefault());
-        mHangTimeButton.setText(sdf.format(mHangTime * 1000));
-        mPauseTimeButton.setText(sdf.format(mPauseTime * 1000));
-        mRepetitionsButton.setText(String.valueOf(mRepetitions));
-        mRestTimeButton.setText(sdf.format(mRestTime * 1000));
-        mTotalRepetitionsButton.setText(String.valueOf(mTotalRepetitions));
+        int hangTime = prefs.getInt("hang_time",
+                Integer.valueOf(getString(R.string.initial_hang_time)));
+        int pauseTime = prefs.getInt("pause_time",
+                Integer.valueOf(getString(R.string.initial_pause_time)));
+        int repetitions = prefs.getInt("repetitions",
+                Integer.valueOf(getString(R.string.initial_repetitions)));
+        int restTime = prefs.getInt("rest_time",
+                Integer.valueOf(getString(R.string.initial_rest_time)));
+        int totalRepetitions = prefs.getInt("total_repetitions",
+                Integer.valueOf(getString(R.string.initial_total_repetitions)));
 
-        Log.d("post load, mRestTime = " + mRestTime);
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.getDefault());
+        mHangTimeButton.setText(sdf.format(hangTime * 1000));
+        mPauseTimeButton.setText(sdf.format(pauseTime * 1000));
+        mRepetitionsButton.setText(String.valueOf(repetitions));
+        mRestTimeButton.setText(sdf.format(restTime * 1000));
+        mTotalRepetitionsButton.setText(String.valueOf(totalRepetitions));
+
+        mNavMenu.setItemChecked(0, true);
+        WorkoutData data = new WorkoutData();
+        data.mHangTime = hangTime;
+        data.mPauseTime = pauseTime;
+        data.mRepetitions = repetitions;
+        data.mRestTime = restTime;
+        data.mTotalRepetitions = totalRepetitions;
+        data.mName = getString(R.string.initial_training_name);
+        mWorkoutDataList.add(data);
+        mNavMenuListItems.add(data.mName);
+        getActionBar().setTitle(data.mName);
     }
 
     public void onChangeTimeClicked(final View view) {

@@ -98,6 +98,22 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
             android:textSize="@dimen/text_size" />
 
+        <ListView
+            android:id="@+id/nav_menu"
+            android:layout_width="@dimen/menu_width"
+            android:layout_height="match_parent"
+            android:background="@color/nav_menu_background"
+            android:divider="@color/divider"
+            android:dividerHeight="1dp"
+            android:choiceMode="singleChoice"/>
+
+        <Button
+            android:id="@+id/navManuCloseButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:onClick="onCloseNavMenuClicked"/>
+
     </com.sleepyduck.fingerboardtrainer.MainLayout>
 
     <com.google.android.gms.ads.AdView

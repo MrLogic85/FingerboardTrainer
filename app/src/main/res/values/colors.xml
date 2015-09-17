@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="primary_dark">#388E3C</color>
+    <color name="primary">#4CAF50</color>
+    <color name="primary_light">#C8E6C9</color>
+    <color name="accent">#FF9800</color>
+    <color name="icon_text_background">#FFFFFF</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#727272</color>
+    <color name="divider">#B6B6B6</color>
+
     <color name="hang_overlay">#55FFFFFF</color>
     <color name="pause_overlay">#55FFFFFF</color>
     <color name="rest_overlay">#55FFFFFF</color>
@@ -7,9 +16,15 @@
     <color name="repeat_total_overlay">#80CBC4</color>
     <color name="button_background">#4CAF50</color>
     <color name="button_background_pressed">#B34CAF50</color>
-    <color name="button_pause_background">#FFAB40</color>
-    <color name="button_pause_background_pressed">#B3FFAB40</color>
+    <color name="button_pause_background">@color/accent</color>
+    <color name="button_pause_background_pressed">#B3FF9800</color>
     <color name="button_text">#FFFFFF</color>
+    <color name="button_text_inverse">#000000</color>
     <color name="text_background">#B2DFDB</color>
     <color name="background">#E8F5E9</color>
+    <color name="nav_menu_background">@color/background</color>
+    <color name="nav_menu_item_background">@color/background</color>
+    <color name="nav_menu_item_background_pressed">#EDE3BB</color>
+    <color name="nav_menu_item_background_pressed_2">#BAC4BA</color>
+    <color name="nav_menu_item_text_color">@color/text_primary</color>
 </resources>
