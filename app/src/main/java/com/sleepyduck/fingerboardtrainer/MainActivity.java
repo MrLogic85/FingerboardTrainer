@@ -79,6 +79,7 @@ public class MainActivity extends Activity {
     private List<WorkoutData> mWorkoutDataList;
     private List<String> mNavMenuListItems;
     private ListView mNavMenu;
+    private AlertDialog mDonateDialog;
 
     private InterstitialAd mInterstitialAd;
     private AdListener mAdListener = new AdListener() {
@@ -190,16 +191,26 @@ public class MainActivity extends Activity {
                     if (responseCode == 0) {
                         JSONObject jo = new JSONObject(purchaseData);
                         Log.d("JSON RESULT: " + jo.toString());
-                        mBillingManager.setHasDonated(true);
-                        invalidateOptionsMenu();
-                        askForAppRating();
+                        String productId = jo.has("productId") ? jo.getString("productId") : null;
+                        if (productId != null && (productId.equals("donate_repeat"))) {
+                            String purchaseToken = "inapp:" + getPackageName() + ":" + productId;
+                            try {
+                                mBillingService.consumePurchase(3, getPackageName(), purchaseToken);
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            mBillingManager.setHasDonated(true);
+                            invalidateOptionsMenu();
+                            askForAppRating();
+                        }
                         return;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                Toast.makeText(this, "Failed to parse make donation.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Failed to process donation.", Toast.LENGTH_LONG).show();
             } else if (requestCode == REQUEST_TTS) {
                 TextToSpeechManager.setHasEngine(true);
             }
@@ -478,9 +489,57 @@ public class MainActivity extends Activity {
     }
 
     private void donateMoney() {
+        DonateLayout view = (DonateLayout) getLayoutInflater().inflate(R.layout.donate, null);
+        view.setHasDonated(mBillingManager.hasDonated());
+        view.setupDonationData(mBillingManager);
+        mDonateDialog = new AlertDialog.Builder(this)
+                .setView(view)
+                .setCancelable(true)
+                .show();
+    }
+
+    public void onDonateClicked(View view) {
+        if (mDonateDialog != null) {
+            mDonateDialog.dismiss();
+            mDonateDialog = null;
+        }
+        String productId = "";
+        switch (view.getId()) {
+            case R.id.donate_small:
+                productId = "donate_1";
+                break;
+            case R.id.donate_medium:
+                productId = "donate_2";
+                break;
+            case R.id.donate_large:
+                productId = "donate_3";
+                break;
+            case R.id.donate_repeat:
+                productId = "donate_repeat";
+                break;
+            default:
+                Toast.makeText(this, "Failed to process in app billing items", Toast.LENGTH_SHORT).show();
+                return;
+        }
         try {
             Bundle buyIntentBundle = mBillingService.getBuyIntent(3, getPackageName(),
-                    mBillingManager.getBillingItems().get(0).productId, "inapp", "");
+                    productId, "inapp", "");
+            if (buyIntentBundle.getInt("RESPONSE_CODE") == 7) {
+                if (productId.equals("donate_repeat")) {
+                    String purchaseToken = "inapp:" + getPackageName() + ":" + productId;
+                    try {
+                        mBillingService.consumePurchase(3, getPackageName(), purchaseToken);
+                        buyIntentBundle = mBillingService.getBuyIntent(3, getPackageName(),
+                                productId, "inapp", "");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(this, "There was an error trying to process your request, please" +
+                            " contact the developer.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
             PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
             startIntentSenderForResult(pendingIntent.getIntentSender(), DONATE_REQUEST_CODE,
                     new Intent(), 0, 0, 0);

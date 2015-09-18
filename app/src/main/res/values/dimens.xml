@@ -10,4 +10,7 @@
     <dimen name="menu_item_padding_left">16dp</dimen>
     <dimen name="menu_item_text_size">16sp</dimen>
 
+    <dimen name="donate_padding">16dp</dimen>
+    <dimen name="donate_text_size">20sp</dimen>
+
 </resources>

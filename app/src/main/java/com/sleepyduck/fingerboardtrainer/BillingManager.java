@@ -13,13 +13,14 @@ import android.os.RemoteException;
 import com.android.vending.billing.IInAppBillingService;
 
 public class BillingManager {
+    private static final String[] AdFreeItems = {"donate_1", "donate_2", "donate_3"};
     private IInAppBillingService mBillingService;
 
     private MainActivity mActivity;
 
     private ArrayList<BillingItem> mBillingItems = new ArrayList<BillingManager.BillingItem>();
 
-    private boolean mHasDonated = true; // Default to true in order to not show ads when there is no internet
+    private boolean mHasDonated = false;
 
     public BillingManager(MainActivity activity, IInAppBillingService service) {
         mActivity = activity;
@@ -86,8 +87,21 @@ public class BillingManager {
             if (response == 0) {
                 ArrayList<String> ownedSkus = ownedItems
                         .getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
-                setHasDonated(ownedSkus.size() > 0);
+                boolean hasDonated = false;
+                for (String ownedSku : ownedSkus) {
+                    for (String adFreeSku : AdFreeItems) {
+                        if (ownedSku.equals(adFreeSku)) {
+                            hasDonated = true;
+                            break;
+                        }
+                    }
+                    if (hasDonated) {
+                        break;
+                    }
+                }
+                setHasDonated(hasDonated);
                 Log.d("User has " + (hasDonated() ? "" : "not ") + "donated");
+                Log.d("User had bought: " + ownedSkus);
             }
         } catch (RemoteException e) {
             e.printStackTrace();

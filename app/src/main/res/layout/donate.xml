@@ -1,6 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <
-</FrameLayout>
+<com.sleepyduck.fingerboardtrainer.DonateLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/primary_light"
+    android:orientation="horizontal"
+    android:padding="@dimen/donate_padding"
+    android:scrollbars="vertical">
+
+    <LinearLayout
+        android:id="@+id/donate_basic_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/donate_small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/button_text"
+                android:clickable="true"
+                android:onClick="onDonateClicked"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:paddingLeft="@dimen/donate_padding"
+                    android:paddingRight="@dimen/donate_padding"
+                    android:paddingTop="@dimen/donate_padding"
+                    android:scaleType="fitEnd"
+                    android:src="@drawable/coin_stack_2" />
+
+                <TextView
+                    android:id="@+id/small_donation_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/donate_padding"
+                    android:text="2€"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/donate_text_size" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="@dimen/donate_padding"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/donate_medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/button_text"
+                android:clickable="true"
+                android:onClick="onDonateClicked"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:paddingLeft="@dimen/donate_padding"
+                    android:paddingRight="@dimen/donate_padding"
+                    android:paddingTop="@dimen/donate_padding"
+                    android:scaleType="fitEnd"
+                    android:src="@drawable/coin_stack_4" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/donate_padding"
+                    android:id="@+id/medium_donation_text"
+                    android:text="4€"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/donate_text_size" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="@dimen/donate_padding"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/donate_large"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/button_text"
+                android:clickable="true"
+                android:onClick="onDonateClicked"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:paddingLeft="@dimen/donate_padding"
+                    android:paddingRight="@dimen/donate_padding"
+                    android:paddingTop="@dimen/donate_padding"
+                    android:scaleType="fitEnd"
+                    android:src="@drawable/coin_stack_6" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/donate_padding"
+                    android:id="@+id/large_donation_text"
+                    android:text="6€"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/donate_text_size" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/donate_padding" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Any donation will reomve ads. It is up to you how much you want to give."
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/donate_text_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/donate_repeat_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/donate_repeat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/button_text"
+            android:clickable="true"
+            android:onClick="onDonateClicked"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:paddingLeft="@dimen/donate_padding"
+                android:paddingRight="@dimen/donate_padding"
+                android:paddingTop="@dimen/donate_padding"
+                android:scaleType="fitEnd"
+                android:src="@drawable/coin_stack_4" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="@dimen/donate_padding"
+                android:id="@+id/repeat_donation_text"
+                android:text="2€"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/donate_text_size" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/donate_padding" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Donate and show your support!"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/donate_text_size" />
+
+    </LinearLayout>
+</com.sleepyduck.fingerboardtrainer.DonateLayout>
