@@ -64,11 +64,6 @@ public class MainActivity extends Activity {
     private TextView mTextView;
     private Button mStartButton;
     private Button mPauseButton;
-    private int mHangTime;
-    private int mRestTime;
-    private int mRepetitions;
-    private int mPauseTime;
-    private int mTotalRepetitions;
     private Button mHangTimeButton;
     private Button mPauseTimeButton;
     private Button mRepetitionsButton;
@@ -179,6 +174,8 @@ public class MainActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectWorkout(position);
+                mMainLayout.setNavMenu(MainLayout.NavMenuState.CLOSED);
+                save();
             }
         });
     }
@@ -277,6 +274,9 @@ public class MainActivity extends Activity {
             case R.id.new_workout:
                 createNewWorkout();
                 return true;
+            case R.id.delete_workout:
+                deleteWorkout();
+                break;
             case R.id.action_notification:
                 showNotificationPicker();
                 return true;
@@ -305,7 +305,7 @@ public class MainActivity extends Activity {
         data.mRepetitions = Integer.valueOf(getString(R.string.initial_repetitions));
         data.mRestTime = Integer.valueOf(getString(R.string.initial_rest_time));
         data.mTotalRepetitions = Integer.valueOf(getString(R.string.initial_total_repetitions));
-        data.mName = getString(R.string.initial_training_name);
+        data.mName = getString(R.string.initial_training_name) + " " + (mNavMenuListItems.size() + 1);
 
         final EditText et = new EditText(this);
         et.setText(data.mName);
@@ -326,11 +326,54 @@ public class MainActivity extends Activity {
                         mWorkoutDataList.add(data);
                         mNavMenuListItems.add(data.mName);
                         getActionBar().setTitle(data.mName);
-                        selectWorkout(mNavMenuListItems.size()-1);
-                        save();
+                        selectWorkout(mNavMenuListItems.size() - 1);
                     }
                 })
                 .show();
+    }
+
+    private void deleteWorkout() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.action_delete)
+                .setMessage(R.string.delete_workout_message)
+                .setCancelable(true)
+                .setNegativeButton(android.R.string.cancel, new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setPositiveButton(android.R.string.ok, new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteWorkout(mNavMenu.getCheckedItemPosition());
+                    }
+                })
+                .show();
+    }
+
+    private void deleteWorkout(int id) {
+        if (mNavMenuListItems.size() <= 1) {
+            resetWorkout(0);
+            selectWorkout(0);
+            changeCurrentWorkoutName();
+        } else {
+            mWorkoutDataList.remove(id);
+            mNavMenuListItems.remove(id);
+            selectWorkout(0);
+        }
+        save();
+    }
+
+    private void resetWorkout(int id) {
+        WorkoutData data = mWorkoutDataList.get(id);
+        data.mName = getString(R.string.initial_training_name) + " " + (id + 1);
+        data.mHangTime = Integer.parseInt(getString(R.string.initial_hang_time));
+        data.mPauseTime = Integer.parseInt(getString(R.string.initial_pause_time));
+        data.mRepetitions = Integer.parseInt(getString(R.string.initial_repetitions));
+        data.mRestTime = Integer.parseInt(getString(R.string.initial_rest_time));
+        data.mTotalRepetitions = Integer.parseInt(getString(R.string.initial_total_repetitions));
+        save();
     }
 
     private void selectWorkout(int id) {
@@ -343,7 +386,7 @@ public class MainActivity extends Activity {
         mTotalRepetitionsButton.setText(String.valueOf(data.mTotalRepetitions));
         getActionBar().setTitle(data.mName);
         mNavMenu.setItemChecked(id, true);
-
+        save();
     }
 
     private void changeCurrentWorkoutName() {
@@ -458,10 +501,11 @@ public class MainActivity extends Activity {
 
     private void start() {
         if (mBinder != null) {
+            WorkoutData data = mWorkoutDataList.get(mNavMenu.getCheckedItemPosition());
             mStartButton.setText(R.string.stop);
             mRunning = true;
-            mBinder.getService().startTimer(mHangTime, mPauseTime, mRepetitions, mRestTime,
-                    mTotalRepetitions, meNotification);
+            mBinder.getService().startTimer(data.mHangTime, data.mPauseTime, data.mRepetitions,
+                    data.mRestTime, data.mTotalRepetitions, meNotification);
             mMainLayout.setLayoutState(LayoutState.RUNNING);
         }
     }
@@ -582,12 +626,12 @@ public class MainActivity extends Activity {
         WorkoutData data;
         for (int i = 0; i < mWorkoutDataList.size(); ++i) {
             data = mWorkoutDataList.get(i);
-            editor.putInt("hang_time_"+i, data.mHangTime);
-            editor.putInt("pause_time_"+i, data.mPauseTime);
-            editor.putInt("repetitions_"+i, data.mRepetitions);
-            editor.putInt("rest_time_"+i, data.mRestTime);
+            editor.putInt("hang_time_" + i, data.mHangTime);
+            editor.putInt("pause_time_" + i, data.mPauseTime);
+            editor.putInt("repetitions_" + i, data.mRepetitions);
+            editor.putInt("rest_time_" + i, data.mRestTime);
             editor.putInt("total_repetitions_" + i, data.mTotalRepetitions);
-            editor.putString("name_"+i, data.mName);
+            editor.putString("name_" + i, data.mName);
         }
 
         editor.commit();
@@ -616,17 +660,17 @@ public class MainActivity extends Activity {
         WorkoutData data;
         for (int i = 0; i < workoutCount; ++i) {
             data = new WorkoutData();
-            data.mHangTime = prefs.getInt("hang_time_"+i,
+            data.mHangTime = prefs.getInt("hang_time_" + i,
                     Integer.valueOf(getString(R.string.initial_hang_time)));
-            data.mPauseTime = prefs.getInt("pause_time_"+i,
+            data.mPauseTime = prefs.getInt("pause_time_" + i,
                     Integer.valueOf(getString(R.string.initial_pause_time)));
-            data.mRepetitions = prefs.getInt("repetitions_"+i,
+            data.mRepetitions = prefs.getInt("repetitions_" + i,
                     Integer.valueOf(getString(R.string.initial_repetitions)));
-            data.mRestTime = prefs.getInt("rest_time_"+i,
+            data.mRestTime = prefs.getInt("rest_time_" + i,
                     Integer.valueOf(getString(R.string.initial_rest_time)));
-            data.mTotalRepetitions = prefs.getInt("total_repetitions_"+i,
+            data.mTotalRepetitions = prefs.getInt("total_repetitions_" + i,
                     Integer.valueOf(getString(R.string.initial_total_repetitions)));
-            data.mName = prefs.getString("name_" + i, getString(R.string.initial_training_name));
+            data.mName = prefs.getString("name_" + i, getString(R.string.initial_training_name) + " " + (i + 1));
             mWorkoutDataList.add(data);
             mNavMenuListItems.add(data.mName);
         }
@@ -668,7 +712,7 @@ public class MainActivity extends Activity {
         data.mRepetitions = repetitions;
         data.mRestTime = restTime;
         data.mTotalRepetitions = totalRepetitions;
-        data.mName = getString(R.string.initial_training_name);
+        data.mName = getString(R.string.initial_training_name) + " 1";
         mWorkoutDataList.add(data);
         mNavMenuListItems.add(data.mName);
         getActionBar().setTitle(data.mName);
@@ -711,17 +755,18 @@ public class MainActivity extends Activity {
     }
 
     private int getValueFromViewId(int id) {
+        WorkoutData data = mWorkoutDataList.get(mNavMenu.getCheckedItemPosition());
         switch (id) {
             case R.id.hang_time:
-                return mHangTime;
+                return data.mHangTime;
             case R.id.pause_time:
-                return mPauseTime;
+                return data.mPauseTime;
             case R.id.rest_time:
-                return mRestTime;
+                return data.mRestTime;
             case R.id.repetitions:
-                return mRepetitions;
+                return data.mRepetitions;
             case R.id.total_repetitions:
-                return mTotalRepetitions;
+                return data.mTotalRepetitions;
             default:
                 break;
         }
@@ -747,17 +792,18 @@ public class MainActivity extends Activity {
     }
 
     private void updateTime(Button view, int seconds) {
+        WorkoutData data = mWorkoutDataList.get(mNavMenu.getCheckedItemPosition());
         SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.getDefault());
         ((Button) view).setText(sdf.format(seconds * 1000));
         switch (view.getId()) {
             case R.id.hang_time:
-                mHangTime = seconds;
+                data.mHangTime = seconds;
                 break;
             case R.id.pause_time:
-                mPauseTime = seconds;
+                data.mPauseTime = seconds;
                 break;
             case R.id.rest_time:
-                mRestTime = seconds;
+                data.mRestTime = seconds;
                 break;
             default:
                 break;
@@ -766,13 +812,14 @@ public class MainActivity extends Activity {
     }
 
     private void updateValue(Button view, int value) {
+        WorkoutData data = mWorkoutDataList.get(mNavMenu.getCheckedItemPosition());
         ((Button) view).setText("" + value);
         switch (view.getId()) {
             case R.id.repetitions:
-                mRepetitions = value;
+                data.mRepetitions = value;
                 break;
             case R.id.total_repetitions:
-                mTotalRepetitions = value;
+                data.mTotalRepetitions = value;
                 break;
             default:
                 break;

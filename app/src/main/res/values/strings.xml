@@ -2,9 +2,10 @@
 <resources>
 
     <string name="app_name">Fingerboard Trainer</string>
-    <string name="action_notification">Notifications</string>
+    <string name="action_notification">Feedback settings</string>
     <string name="action_change_name">Change name</string>
     <string name="action_add_new">New workout</string>
+    <string name="action_delete">Delete workout</string>
     <string name="action_donate">Donate</string>
     <string name="action_donate_remove_ads">Donate / Remove ads</string>
     <string name="initial_hang_time">10</string>
@@ -12,7 +13,7 @@
     <string name="initial_repetitions">3</string>
     <string name="initial_rest_time">300</string>
     <string name="initial_total_repetitions">3</string>
-    <string name="initial_training_name">Workout 1</string>
+    <string name="initial_training_name">Workout</string>
     <string name="hang_time">Hang time (mm:ss)</string>
     <string name="pause_time">Pause time (mm:ss)</string>
     <string name="repetitions">Rounds</string>
@@ -32,6 +33,7 @@
     <string name="close_app">Close App</string>
     <string name="close_app_text">This will stop the workout and close the app. If you are just resting and want to use the phone while waiting, press Home instead of Back key.</string>
     <string name="exit">Exit</string>
+    <string name="delete_workout_message">Are you sure you want to delete this workout?</string>
     
     <string name="say_start">Start!</string>
     <string name="say_stop">Stop!</string>
