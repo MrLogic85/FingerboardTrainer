@@ -406,7 +406,6 @@ public class MainActivity extends Activity {
         et.setText(mWorkoutDataList.get(currentWorkout).mName);
         et.setHint(mWorkoutDataList.get(currentWorkout).mName);
         new AlertDialog.Builder(this)
-                .setTitle(R.string.action_change_name)
                 .setView(et)
                 .setCancelable(true)
                 .setNegativeButton(android.R.string.cancel, new OnClickListener() {

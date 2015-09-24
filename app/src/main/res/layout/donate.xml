@@ -46,7 +46,6 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:paddingBottom="@dimen/donate_padding"
-                    android:text="2€"
                     android:textColor="@color/text_primary"
                     android:textSize="@dimen/donate_text_size" />
             </LinearLayout>
@@ -82,7 +81,6 @@
                     android:gravity="center"
                     android:paddingBottom="@dimen/donate_padding"
                     android:id="@+id/medium_donation_text"
-                    android:text="4€"
                     android:textColor="@color/text_primary"
                     android:textSize="@dimen/donate_text_size" />
             </LinearLayout>
@@ -118,7 +116,6 @@
                     android:gravity="center"
                     android:paddingBottom="@dimen/donate_padding"
                     android:id="@+id/large_donation_text"
-                    android:text="6€"
                     android:textColor="@color/text_primary"
                     android:textSize="@dimen/donate_text_size" />
             </LinearLayout>
@@ -134,7 +131,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Any donation will reomve ads. It is up to you how much you want to give."
+            android:text="@string/donate_text"
             android:textColor="@color/text_primary"
             android:textSize="@dimen/donate_text_size" />
     </LinearLayout>
@@ -172,7 +169,6 @@
                 android:gravity="center"
                 android:paddingBottom="@dimen/donate_padding"
                 android:id="@+id/repeat_donation_text"
-                android:text="2€"
                 android:textColor="@color/text_primary"
                 android:textSize="@dimen/donate_text_size" />
         </LinearLayout>
@@ -185,7 +181,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Donate and show your support!"
+            android:text="@string/donate_again"
             android:textColor="@color/text_primary"
             android:textSize="@dimen/donate_text_size" />
 

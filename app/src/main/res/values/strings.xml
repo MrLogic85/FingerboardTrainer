@@ -44,4 +44,7 @@
     <string name="banner_ad_unit_id">ca-app-pub-1586949106208904/1438270076</string>
     <string name="interstitial_ad_unit_id">ca-app-pub-1586949106208904/3554131675</string>
 
+    <string name="donate_text">Any donation will remove ads. It is up to you how much you want to give.</string>
+    <string name="donate_again">Donate and show your support!</string>
+
 </resources>

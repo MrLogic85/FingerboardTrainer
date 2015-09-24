@@ -111,6 +111,9 @@ public class BillingManager {
     private Bundle getInAppItems() {
         ArrayList<String> skuList = new ArrayList<String>();
         skuList.add("donate_1");
+        skuList.add("donate_2");
+        skuList.add("donate_3");
+        skuList.add("donate_repeat");
         Bundle querySkus = new Bundle();
         querySkus.putStringArrayList("ITEM_ID_LIST", skuList);
         try {
