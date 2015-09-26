@@ -429,7 +429,9 @@ public class MainActivity extends Activity {
 
     public void activateInAppPurchases() {
         invalidateOptionsMenu();
-        activateBannerAds();
+        if (!mBillingManager.hasDonated()) {
+            activateBannerAds();
+        }
     }
 
     private void activateBannerAds() {
