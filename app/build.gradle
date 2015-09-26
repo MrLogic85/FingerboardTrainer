@@ -5,11 +5,11 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "com.sleepyduckstudio.fingerboardtrainer.fingerboardtrainer"
-        minSdkVersion 15
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId "com.sleepyduck.fingerboardtrainer"
+        minSdkVersion 16
+        targetSdkVersion 21
+        versionCode 33
+        versionName "4.1.1.2"
     }
     buildTypes {
         release {
