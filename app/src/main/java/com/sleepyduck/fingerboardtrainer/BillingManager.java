@@ -13,7 +13,6 @@ import android.os.RemoteException;
 import com.android.vending.billing.IInAppBillingService;
 
 public class BillingManager {
-    private static final String[] AdFreeItems = {"donate_1", "donate_2", "donate_3"};
     private IInAppBillingService mBillingService;
 
     private MainActivity mActivity;
@@ -87,19 +86,7 @@ public class BillingManager {
             if (response == 0) {
                 ArrayList<String> ownedSkus = ownedItems
                         .getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
-                boolean hasDonated = false;
-                for (String ownedSku : ownedSkus) {
-                    for (String adFreeSku : AdFreeItems) {
-                        if (ownedSku.equals(adFreeSku)) {
-                            hasDonated = true;
-                            break;
-                        }
-                    }
-                    if (hasDonated) {
-                        break;
-                    }
-                }
-                setHasDonated(hasDonated);
+                setHasDonated(ownedSkus.size() > 0);
                 Log.d("User has " + (hasDonated() ? "" : "not ") + "donated");
                 Log.d("User had bought: " + ownedSkus);
             }

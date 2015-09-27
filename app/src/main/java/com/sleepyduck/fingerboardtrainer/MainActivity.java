@@ -69,6 +69,7 @@ public class MainActivity extends Activity {
     private Button mRepetitionsButton;
     private Button mRestTimeButton;
     private Button mTotalRepetitionsButton;
+    private AdView mAdView;
     private Handler mHandler;
     private boolean mRunning;
     private boolean mDonateAsAction;
@@ -146,6 +147,7 @@ public class MainActivity extends Activity {
         mRepetitionsButton = (Button) findViewById(R.id.repetitions);
         mRestTimeButton = (Button) findViewById(R.id.rest_time);
         mTotalRepetitionsButton = (Button) findViewById(R.id.total_repetitions);
+        mAdView = (AdView) findViewById(R.id.adView);
 
         setupActionBar();
         setupNavMenu();
@@ -202,6 +204,7 @@ public class MainActivity extends Activity {
                         } else {
                             mBillingManager.setHasDonated(true);
                             invalidateOptionsMenu();
+                            mAdView.setVisibility(View.GONE);
                             askForAppRating();
                         }
                         return;
@@ -223,6 +226,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         Log.d("onResume");
         bindService(mServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        mAdView.resume();
         super.onResume();
     }
 
@@ -230,6 +234,7 @@ public class MainActivity extends Activity {
     protected void onPause() {
         Log.d("onPause");
         unbindService(mServiceConnection);
+        mAdView.pause();
         super.onPause();
     }
 
@@ -435,12 +440,11 @@ public class MainActivity extends Activity {
     }
 
     private void activateBannerAds() {
-        AdView adView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("E4A3CE18325B125C0A1237F5F63630AA")
                 .addTestDevice("F825AA50BD874BE777FAC34840E3B104")
                 .build();
-        adView.loadAd(adRequest);
+        mAdView.loadAd(adRequest);
     }
 
     private void requestNewInterstitial() {
