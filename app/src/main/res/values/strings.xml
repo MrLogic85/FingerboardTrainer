@@ -4,7 +4,6 @@
     <string name="app_name">Fingerboard Trainer</string>
     <string name="action_notification">Feedback settings</string>
     <string name="action_change_name">Change name</string>
-    <string name="action_add_new">New workout</string>
     <string name="action_delete">Delete workout</string>
     <string name="action_donate">Donate</string>
     <string name="action_donate_remove_ads">Donate / Remove ads</string>

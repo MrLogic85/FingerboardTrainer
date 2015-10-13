@@ -13,4 +13,6 @@
     <dimen name="donate_padding">16dp</dimen>
     <dimen name="donate_text_size">20sp</dimen>
 
+    <dimen name="margin">16dp</dimen>
+
 </resources>

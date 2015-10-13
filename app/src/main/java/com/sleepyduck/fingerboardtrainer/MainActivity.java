@@ -29,12 +29,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -287,9 +284,6 @@ public class MainActivity extends Activity {
             case R.id.change_name:
                 changeCurrentWorkoutName();
                 return true;
-            case R.id.new_workout:
-                createNewWorkout();
-                return true;
             case R.id.delete_workout:
                 deleteWorkout();
                 break;
@@ -307,11 +301,15 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                showNavMenu();
+                toggleNavMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void onAddWorkoutClicked(View view) {
+        createNewWorkout();
     }
 
     private void createNewWorkout() {
@@ -604,8 +602,11 @@ public class MainActivity extends Activity {
         hideNavMenu();
     }
 
-    private void showNavMenu() {
-        mMainLayout.setNavMenu(MainLayout.NavMenuState.OPEN);
+    private void toggleNavMenu() {
+        mMainLayout.setNavMenu(
+                mMainLayout.getNavMenuState() == MainLayout.NavMenuState.OPEN
+                        ? MainLayout.NavMenuState.CLOSED
+                        : MainLayout.NavMenuState.OPEN);
     }
 
     private void hideNavMenu() {

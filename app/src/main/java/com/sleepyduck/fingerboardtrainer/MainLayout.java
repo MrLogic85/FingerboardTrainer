@@ -6,6 +6,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 public class MainLayout extends ViewGroup {
     public static final String TAG = "fingerboardtrainer";
@@ -54,6 +55,7 @@ public class MainLayout extends ViewGroup {
                 break;
         }
         onNavMeasure(widthMeasureSpec, heightMeasureSpec);
+        onAdMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     private void onNormalMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -149,8 +151,17 @@ public class MainLayout extends ViewGroup {
     private void onNavMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int end = (int) getResources().getDimension(R.dimen.menu_width);
-        findViewById(R.id.nav_menu).measure(MeasureSpec.makeMeasureSpec(end, MeasureSpec.EXACTLY), heightMeasureSpec);
+        findViewById(R.id.nav_menu_container).measure(MeasureSpec.makeMeasureSpec(end, MeasureSpec.EXACTLY), heightMeasureSpec);
         findViewById(R.id.navManuCloseButton).measure(MeasureSpec.makeMeasureSpec(width-end, MeasureSpec.EXACTLY), heightMeasureSpec);
+    }
+
+    private void onAdMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        Log.d("adSize " + width + ", " + height);
+        findViewById(R.id.ad_container).measure(
+                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
     }
 
     @Override
@@ -173,6 +184,7 @@ public class MainLayout extends ViewGroup {
                 onNavMenuClosedLayout(changed, left, top, right, bottom);
                 break;
         }
+        onAdLayout(changed, left, top, right, bottom);
     }
 
     private void onNormalLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -263,14 +275,22 @@ public class MainLayout extends ViewGroup {
 
     private void onNavMenuOpenLayout(boolean changed, int left, int top, int right, int bottom) {
         int end = (int)(getResources().getDimension(R.dimen.menu_width));
-        findViewById(R.id.nav_menu).layout(0, top, end, bottom);
+        findViewById(R.id.nav_menu_container).layout(0, top, end, bottom);
         findViewById(R.id.navManuCloseButton).layout(end, top, right, bottom);
     }
 
     private void onNavMenuClosedLayout(boolean changed, int left, int top, int right, int bottom) {
         int end = (int)(getResources().getDimension(R.dimen.menu_width));
-        findViewById(R.id.nav_menu).layout(-end, top, 0, bottom);
+        findViewById(R.id.nav_menu_container).layout(-end, top, 0, bottom);
         findViewById(R.id.navManuCloseButton).layout(end - right, top, 0, bottom);
+    }
+
+    private void onAdLayout(boolean changed, int left, int top, int right, int bottom) {
+        View adContainer= findViewById(R.id.ad_container);
+        int adTop = bottom - top - adContainer.getMeasuredHeight();
+        adContainer.layout(0, adTop, right-left, bottom-top);
+        Log.d("adLayout " + 0 + ", " + adTop + ", " + (right-left) + ", " + (bottom-top));
+        Log.d("adMeasuredSize " + adContainer.getMeasuredWidth() + ", " + adContainer.getMeasuredHeight());
     }
 
     public void setLayoutState(LayoutState layoutState) {

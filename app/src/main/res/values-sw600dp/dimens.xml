@@ -8,4 +8,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="menu_width">252dp</dimen>
+    <dimen name="menu_item_height">62dp</dimen>
+    <dimen name="menu_item_padding_left">16dp</dimen>
+    <dimen name="menu_item_text_size">20sp</dimen>
+
 </resources>
