@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.sleepyduck.fingerboardtrainer"
-        minSdkVersion 10
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 35
         versionName "4.1.2.0"
