@@ -1,17 +1,6 @@
 
 package com.sleepyduck.fingerboardtrainer;
 
-import com.android.vending.billing.IInAppBillingService;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
-import com.purplebrain.adbuddiz.sdk.AdBuddiz;
-import com.sleepyduck.fingerboardtrainer.MainLayout.LayoutState;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -43,6 +32,16 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.vending.billing.IInAppBillingService;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.sleepyduck.fingerboardtrainer.MainLayout.LayoutState;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,11 +79,6 @@ public class MainActivity extends Activity {
     private AlertDialog mDonateDialog;
 
     private InterstitialAd mInterstitialAd;
-    private AdListener mAdListener = new AdListener() {
-        public void onAdClosed() {
-            requestNewInterstitial();
-        }
-    };
 
     private TimerBinder mBinder;
 
@@ -108,6 +102,16 @@ public class MainActivity extends Activity {
     private IInAppBillingService mBillingService;
 
     private ServiceConnection mBillingServiceConn = new ServiceConnection() {
+        @Override
+        public void onBindingDied(ComponentName name) {
+            Log.d("Binding died");
+        }
+
+        @Override
+        public void onNullBinding(ComponentName name) {
+            Log.d("Null Binding");
+        }
+
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mBillingService = null;
@@ -135,16 +139,16 @@ public class MainActivity extends Activity {
         billingServiceIntent.setPackage("com.android.vending");
         bindService(billingServiceIntent, mBillingServiceConn, Context.BIND_AUTO_CREATE);
 
-        mMainLayout = (MainLayout) findViewById(R.id.main_layout);
-        mTextView = (TextView) findViewById(R.id.textView);
-        mStartButton = (Button) findViewById(R.id.start_button);
-        mPauseButton = (Button) findViewById(R.id.pause_button);
-        mHangTimeButton = (Button) findViewById(R.id.hang_time);
-        mPauseTimeButton = (Button) findViewById(R.id.pause_time);
-        mRepetitionsButton = (Button) findViewById(R.id.repetitions);
-        mRestTimeButton = (Button) findViewById(R.id.rest_time);
-        mTotalRepetitionsButton = (Button) findViewById(R.id.total_repetitions);
-        mAdView = (AdView) findViewById(R.id.adView);
+        mMainLayout = findViewById(R.id.main_layout);
+        mTextView = findViewById(R.id.textView);
+        mStartButton = findViewById(R.id.start_button);
+        mPauseButton = findViewById(R.id.pause_button);
+        mHangTimeButton = findViewById(R.id.hang_time);
+        mPauseTimeButton = findViewById(R.id.pause_time);
+        mRepetitionsButton = findViewById(R.id.repetitions);
+        mRestTimeButton = findViewById(R.id.rest_time);
+        mTotalRepetitionsButton = findViewById(R.id.total_repetitions);
+        mAdView = findViewById(R.id.adView);
 
         setupActionBar();
         setupNavMenu();
@@ -152,9 +156,7 @@ public class MainActivity extends Activity {
 
         mHandler = new Handler();
 
-        AdBuddiz.setPublisherKey(getString(R.string.adbuddiz_id));
-        AdBuddiz.cacheAds(this);
-
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
         requestNewInterstitial();
@@ -168,7 +170,7 @@ public class MainActivity extends Activity {
         mWorkoutDataList = new ArrayList<>();
         mNavMenuListItems = new ArrayList<>();
         ArrayAdapter<String> mNavMenuAdapter = new ArrayAdapter<>(this, R.layout.nav_menu_item, mNavMenuListItems);
-        mNavMenu = (ListView) findViewById(R.id.nav_menu);
+        mNavMenu = findViewById(R.id.nav_menu);
         mNavMenu.setAdapter(mNavMenuAdapter);
         mNavMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -439,16 +441,14 @@ public class MainActivity extends Activity {
 
     private void activateBannerAds() {
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("E4A3CE18325B125C0A1237F5F63630AA")
-                .addTestDevice("F825AA50BD874BE777FAC34840E3B104")
+                .addTestDevice("67B5ACD31F0A329A191C59D16C81E9D7")
                 .build();
         mAdView.loadAd(adRequest);
     }
 
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("E4A3CE18325B125C0A1237F5F63630AA")
-                .addTestDevice("F825AA50BD874BE777FAC34840E3B104")
+                .addTestDevice("67B5ACD31F0A329A191C59D16C81E9D7")
                 .build();
         mInterstitialAd.loadAd(adRequest);
     }
@@ -459,13 +459,13 @@ public class MainActivity extends Activity {
         RadioButton rb = null;
         switch (meNotification) {
             case NONE:
-                rb = (RadioButton) picker.findViewById(R.id.mode_silent);
+                rb = picker.findViewById(R.id.mode_silent);
                 break;
             case VOICE:
-                rb = (RadioButton) picker.findViewById(R.id.mode_voice);
+                rb = picker.findViewById(R.id.mode_voice);
                 break;
             case VIBRATE:
-                rb = (RadioButton) picker.findViewById(R.id.mode_vibrate);
+                rb = picker.findViewById(R.id.mode_vibrate);
                 break;
         }
         rb.setChecked(true);
@@ -622,14 +622,13 @@ public class MainActivity extends Activity {
     }
 
     private void showAd(int timeMillis) {
-        if (!mBillingManager.hasDonated()) {
+        if (mBillingManager != null && !mBillingManager.hasDonated()) {
             if (mAdTimer < System.currentTimeMillis()) {
                 showDonate();
                 mAdTimer = System.currentTimeMillis() + AD_PAUSE_TIME;
                 mHandler.postDelayed(new Runnable() {
                     public void run() {
                         if (!isFinishing()) {
-                            //AdBuddiz.showAd(MainActivity.this);
                             if (mInterstitialAd.isLoaded()) {
                                 mInterstitialAd.show();
                             } else {
@@ -785,8 +784,8 @@ public class MainActivity extends Activity {
 
     public void onChangeTimeClicked(final View view) {
         final View picker = View.inflate(this, R.layout.minutes_seconds_picker, null);
-        final NumberPicker minutes = (NumberPicker) picker.findViewById(R.id.time_picker_minutes);
-        final NumberPicker seconds = (NumberPicker) picker.findViewById(R.id.time_picker_seconds);
+        final NumberPicker minutes = picker.findViewById(R.id.time_picker_minutes);
+        final NumberPicker seconds = picker.findViewById(R.id.time_picker_seconds);
         minutes.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         seconds.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         minutes.setMaxValue(60);
@@ -859,7 +858,7 @@ public class MainActivity extends Activity {
     private void updateTime(Button view, int seconds) {
         WorkoutData data = mWorkoutDataList.get(mNavMenu.getCheckedItemPosition());
         SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.getDefault());
-        ((Button) view).setText(sdf.format(seconds * 1000));
+        view.setText(sdf.format(seconds * 1000));
         switch (view.getId()) {
             case R.id.hang_time:
                 data.mHangTime = seconds;
@@ -878,7 +877,7 @@ public class MainActivity extends Activity {
 
     private void updateValue(Button view, int value) {
         WorkoutData data = mWorkoutDataList.get(mNavMenu.getCheckedItemPosition());
-        ((Button) view).setText("" + value);
+        view.setText("" + value);
         switch (view.getId()) {
             case R.id.repetitions:
                 data.mRepetitions = value;
