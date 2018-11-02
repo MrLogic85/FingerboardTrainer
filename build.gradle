@@ -15,3 +15,8 @@ allprojects {
         jcenter()
     }
 }
+
+ext {
+    minVersion = 19
+    targetVersion = 28
+}

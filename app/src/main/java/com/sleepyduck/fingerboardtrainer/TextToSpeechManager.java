@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class TextToSpeechManager {
+import se.sleepyduckstudio.logger.Log;
+
+class TextToSpeechManager {
     private static boolean HasEngine = true;
 
     private Context mContext;
@@ -58,7 +60,7 @@ public class TextToSpeechManager {
         }
     };
 
-    public TextToSpeechManager(Context context) {
+    TextToSpeechManager(Context context) {
         mContext = context;
         if (HasEngine) {
             mTTS = new TextToSpeech(mContext, mInitListener);
@@ -66,7 +68,7 @@ public class TextToSpeechManager {
         }
     }
 
-    public void shutdown() {
+    void shutdown() {
         for (File file : mSpeachMap.values()) {
             file.deleteOnExit();
         }
@@ -76,11 +78,11 @@ public class TextToSpeechManager {
         mTTS.shutdown();
     }
 
-    public boolean isActive() {
+    boolean isActive() {
         return mIsTextToSpeechActive && HasEngine;
     }
 
-    public void say(String text) {
+    private void say(String text) {
         if (!mIsTextToSpeechActive) {
             return;
         }
@@ -98,11 +100,11 @@ public class TextToSpeechManager {
         }
     }
 
-    public void say(int textResId) {
+    void say(int textResId) {
         say(mContext.getString(textResId));
     }
 
-    public void prepareTextToSay(String text) {
+    private void prepareTextToSay(String text) {
         if (!mIsTextToSpeechActive) {
             return;
         }
@@ -123,11 +125,11 @@ public class TextToSpeechManager {
         }
     }
 
-    public void prepareTextToSay(int textResId) {
+    void prepareTextToSay(int textResId) {
         prepareTextToSay(mContext.getString(textResId));
     }
 
-    public static void initializeTTSCheck(Activity activity) {
+    static void initializeTTSCheck(Activity activity) {
         Intent checkIntent = new Intent();
         checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
         if (checkIntent.resolveActivity(activity.getPackageManager()) == null) {
@@ -138,7 +140,7 @@ public class TextToSpeechManager {
         }
     }
 
-    public static void setHasEngine(boolean hasEngine) {
+    static void setHasEngine(boolean hasEngine) {
         HasEngine = hasEngine;
     }
 }

@@ -3,13 +3,9 @@ package com.sleepyduck.fingerboardtrainer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.IntentSender.SendIntentException;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -17,11 +13,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,19 +23,14 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.vending.billing.IInAppBillingService;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.sleepyduck.fingerboardtrainer.MainLayout.LayoutState;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,6 +39,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
+import se.sleepyduckstudio.billing.BillingManager;
+import se.sleepyduckstudio.logger.Log;
 
 public class MainActivity extends Activity {
     private static final long AD_PAUSE_TIME = 300000;
@@ -80,48 +72,21 @@ public class MainActivity extends Activity {
 
     private InterstitialAd mInterstitialAd;
 
+    private BillingManager mBillingManager;
+
     private TimerBinder mBinder;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
         public void onServiceDisconnected(ComponentName name) {
-            Log.d("onServiceDisconnected");
+            se.sleepyduckstudio.logger.Log.d("onServiceDisconnected");
             mBinder = null;
-            mStartButton.setEnabled(false);
         }
 
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d("onServiceConnected");
+            se.sleepyduckstudio.logger.Log.d("onServiceConnected");
             mBinder = (TimerBinder) service;
             mBinder.getService().setMainActivity(MainActivity.this);
-            mStartButton.setEnabled(true);
-        }
-    };
-
-    private BillingManager mBillingManager;
-    private IInAppBillingService mBillingService;
-
-    private ServiceConnection mBillingServiceConn = new ServiceConnection() {
-        @Override
-        public void onBindingDied(ComponentName name) {
-            Log.d("Binding died");
-        }
-
-        @Override
-        public void onNullBinding(ComponentName name) {
-            Log.d("Null Binding");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBillingService = null;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mBillingService = IInAppBillingService.Stub.asInterface(service);
-            mBillingManager = new BillingManager(MainActivity.this, mBillingService);
-            mBillingManager.handleBillingConnectionOperations();
         }
     };
 
@@ -131,13 +96,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mBillingManager = new BillingManager(this, this::activateInAppPurchases);
+
         mServiceIntent = new Intent(this, TimerService.class);
         startService(mServiceIntent);
-
-        Intent billingServiceIntent = new Intent(
-                "com.android.vending.billing.InAppBillingService.BIND");
-        billingServiceIntent.setPackage("com.android.vending");
-        bindService(billingServiceIntent, mBillingServiceConn, Context.BIND_AUTO_CREATE);
 
         mMainLayout = findViewById(R.id.main_layout);
         mTextView = findViewById(R.id.textView);
@@ -172,13 +134,10 @@ public class MainActivity extends Activity {
         ArrayAdapter<String> mNavMenuAdapter = new ArrayAdapter<>(this, R.layout.nav_menu_item, mNavMenuListItems);
         mNavMenu = findViewById(R.id.nav_menu);
         mNavMenu.setAdapter(mNavMenuAdapter);
-        mNavMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectWorkout(position);
-                mMainLayout.setNavMenu(MainLayout.NavMenuState.CLOSED);
-                save();
-            }
+        mNavMenu.setOnItemClickListener((parent, view, position, id) -> {
+            selectWorkout(position);
+            mMainLayout.setNavMenu(MainLayout.NavMenuState.CLOSED);
+            save();
         });
     }
 
@@ -186,33 +145,9 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == DONATE_REQUEST_CODE) {
-                int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
-                String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
-                try {
-                    if (responseCode == 0) {
-                        JSONObject jo = new JSONObject(purchaseData);
-                        Log.d("JSON RESULT: " + jo.toString());
-                        String productId = jo.has("productId") ? jo.getString("productId") : null;
-                        if (productId != null && (productId.equals("donate_repeat"))) {
-                            String purchaseToken = "inapp:" + getPackageName() + ":" + productId;
-                            try {
-                                mBillingService.consumePurchase(3, getPackageName(), purchaseToken);
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            mBillingManager.setHasDonated(true);
-                            invalidateOptionsMenu();
-                            mAdView.setVisibility(View.GONE);
-                            askForAppRating();
-                        }
-                        return;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                Toast.makeText(this, "Failed to process donation.", Toast.LENGTH_LONG).show();
+                mBillingManager.consumePurchase(this, data);
+                mAdView.setVisibility(View.GONE);
+                askForAppRating();
             } else if (requestCode == REQUEST_TTS) {
                 TextToSpeechManager.setHasEngine(true);
             }
@@ -241,10 +176,7 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         Log.d("onDestroy");
         stopService(mServiceIntent);
-
-        if (mBillingService != null) {
-            unbindService(mBillingServiceConn);
-        }
+        mBillingManager.destroy(this);
 
         super.onDestroy();
     }
@@ -329,21 +261,13 @@ public class MainActivity extends Activity {
                 .setTitle(R.string.action_change_name)
                 .setView(et)
                 .setCancelable(true)
-                .setNegativeButton(android.R.string.cancel, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .setPositiveButton(android.R.string.ok, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        data.mName = et.getText().toString();
-                        mWorkoutDataList.add(data);
-                        mNavMenuListItems.add(data.mName);
-                        getActionBar().setTitle(data.mName);
-                        selectWorkout(mNavMenuListItems.size() - 1);
-                    }
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    data.mName = et.getText().toString();
+                    mWorkoutDataList.add(data);
+                    mNavMenuListItems.add(data.mName);
+                    getActionBar().setTitle(data.mName);
+                    selectWorkout(mNavMenuListItems.size() - 1);
                 })
                 .show();
     }
@@ -353,18 +277,8 @@ public class MainActivity extends Activity {
                 .setTitle(R.string.action_delete)
                 .setMessage(R.string.delete_workout_message)
                 .setCancelable(true)
-                .setNegativeButton(android.R.string.cancel, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .setPositiveButton(android.R.string.ok, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteWorkout(mNavMenu.getCheckedItemPosition());
-                    }
-                })
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> deleteWorkout(mNavMenu.getCheckedItemPosition()))
                 .show();
     }
 
@@ -413,21 +327,13 @@ public class MainActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setView(et)
                 .setCancelable(true)
-                .setNegativeButton(android.R.string.cancel, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .setPositiveButton(android.R.string.ok, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        WorkoutData data = mWorkoutDataList.get(currentWorkout);
-                        data.mName = et.getText().toString();
-                        mNavMenuListItems.set(currentWorkout, data.mName);
-                        getActionBar().setTitle(data.mName);
-                        save();
-                    }
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    WorkoutData data = mWorkoutDataList.get(currentWorkout);
+                    data.mName = et.getText().toString();
+                    mNavMenuListItems.set(currentWorkout, data.mName);
+                    getActionBar().setTitle(data.mName);
+                    save();
                 })
                 .show();
     }
@@ -469,23 +375,21 @@ public class MainActivity extends Activity {
                 break;
         }
         rb.setChecked(true);
-        picker.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
+        picker.setOnCheckedChangeListener((group, checkedId) -> {
 
-                switch (checkedId) {
-                    case R.id.mode_silent:
-                        meNotification = Notification.NONE;
-                        break;
-                    case R.id.mode_voice:
-                        meNotification = Notification.VOICE;
-                        TextToSpeechManager.initializeTTSCheck(MainActivity.this);
-                        break;
-                    case R.id.mode_vibrate:
-                        meNotification = Notification.VIBRATE;
-                        break;
-                }
-                save();
+            switch (checkedId) {
+                case R.id.mode_silent:
+                    meNotification = Notification.NONE;
+                    break;
+                case R.id.mode_voice:
+                    meNotification = Notification.VOICE;
+                    TextToSpeechManager.initializeTTSCheck(MainActivity.this);
+                    break;
+                case R.id.mode_vibrate:
+                    meNotification = Notification.VIBRATE;
+                    break;
             }
+            save();
         });
         new AlertDialog.Builder(this).setView(picker).setTitle(R.string.action_notification)
                 .setPositiveButton(android.R.string.ok, null).show();
@@ -506,7 +410,8 @@ public class MainActivity extends Activity {
             mDonateDialog.dismiss();
             mDonateDialog = null;
         }
-        String productId = "";
+
+        String productId;
         switch (view.getId()) {
             case R.id.donate_small:
                 productId = "donate_1";
@@ -524,33 +429,8 @@ public class MainActivity extends Activity {
                 Toast.makeText(this, "Failed to process in app billing items", Toast.LENGTH_SHORT).show();
                 return;
         }
-        try {
-            Bundle buyIntentBundle = mBillingService.getBuyIntent(3, getPackageName(),
-                    productId, "inapp", "");
-            if (buyIntentBundle.getInt("RESPONSE_CODE") == 7) {
-                if (productId.equals("donate_repeat")) {
-                    String purchaseToken = "inapp:" + getPackageName() + ":" + productId;
-                    try {
-                        mBillingService.consumePurchase(3, getPackageName(), purchaseToken);
-                        buyIntentBundle = mBillingService.getBuyIntent(3, getPackageName(),
-                                productId, "inapp", "");
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Toast.makeText(this, "There was an error trying to process your request, please" +
-                            " contact the developer.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
-            PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-            startIntentSenderForResult(pendingIntent.getIntentSender(), DONATE_REQUEST_CODE,
-                    new Intent(), 0, 0, 0);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (SendIntentException e) {
-            e.printStackTrace();
-        }
+
+        mBillingManager.purchase(this, productId, DONATE_REQUEST_CODE);
     }
 
     public void onStartClicked(View view) {
@@ -614,11 +494,7 @@ public class MainActivity extends Activity {
     }
 
     public void setText(final String text) {
-        mHandler.post(new Runnable() {
-            public void run() {
-                mTextView.setText(text);
-            }
-        });
+        mHandler.post(() -> mTextView.setText(text));
     }
 
     private void showAd(int timeMillis) {
@@ -626,14 +502,12 @@ public class MainActivity extends Activity {
             if (mAdTimer < System.currentTimeMillis()) {
                 showDonate();
                 mAdTimer = System.currentTimeMillis() + AD_PAUSE_TIME;
-                mHandler.postDelayed(new Runnable() {
-                    public void run() {
-                        if (!isFinishing()) {
-                            if (mInterstitialAd.isLoaded()) {
-                                mInterstitialAd.show();
-                            } else {
-                                mAdTimer = -1;
-                            }
+                mHandler.postDelayed(() -> {
+                    if (!isFinishing()) {
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        } else {
+                            mAdTimer = -1;
                         }
                     }
                 }, timeMillis);
@@ -648,30 +522,28 @@ public class MainActivity extends Activity {
 
     public void onTrainingCompleted(final int hangTime, final int pauseTime, final int repetitions,
                                     final int restTime, final int totalRepetitions) {
-        mHandler.post(new Runnable() {
-            public void run() {
-                stop();
-                SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
-                Set<String> history = new HashSet<String>();
-                history = new HashSet<>(prefs.getStringSet("history", history));
-                Editor editor = prefs.edit();
-                Calendar cal = Calendar.getInstance();
-                cal.setTimeInMillis(System.currentTimeMillis());
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale
-                        .getDefault());
-                String log = sdf.format(cal.getTime());
-                log += " - Hang/Pause " + hangTime + "s/" + pauseTime + "s, Repetitions "
-                        + repetitions + ", Rest " + (restTime / 60) + "m " + (restTime % 60)
-                        + "s, Total repetitions " + totalRepetitions;
-                history.add(log);
-                editor.putStringSet("history", history);
-                if (!editor.commit()) {
-                    // Toast.makeText(MainActivity.this,
-                    // "Failed to save shared preferences",
-                    // Toast.LENGTH_LONG).show();
-                }
-                setText("Good job!");
+        mHandler.post(() -> {
+            stop();
+            SharedPreferences prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE);
+            Set<String> history = new HashSet<>();
+            history = new HashSet<>(prefs.getStringSet("history", history));
+            Editor editor = prefs.edit();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(System.currentTimeMillis());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale
+                    .getDefault());
+            String log = sdf.format(cal.getTime());
+            log += " - Hang/Pause " + hangTime + "s/" + pauseTime + "s, Repetitions "
+                    + repetitions + ", Rest " + (restTime / 60) + "m " + (restTime % 60)
+                    + "s, Total repetitions " + totalRepetitions;
+            history.add(log);
+            editor.putStringSet("history", history);
+            if (!editor.commit()) {
+                // Toast.makeText(MainActivity.this,
+                // "Failed to save shared preferences",
+                // Toast.LENGTH_LONG).show();
             }
+            setText("Good job!");
         });
         showAd(2000);
     }
@@ -795,12 +667,7 @@ public class MainActivity extends Activity {
         seconds.setValue(val % 60);
         new AlertDialog.Builder(this).setView(picker).setTitle(getTitleFromViewId(view.getId()))
                 .setNegativeButton(android.R.string.cancel, null).setCancelable(true)
-                .setPositiveButton(android.R.string.yes, new OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        updateTime((Button) view, minutes.getValue() * 60 + seconds.getValue());
-                    }
-                }).show();
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> updateTime((Button) view, minutes.getValue() * 60 + seconds.getValue())).show();
     }
 
     public void onChangeValueClicked(final View view) {
@@ -810,12 +677,7 @@ public class MainActivity extends Activity {
         picker.setValue(getValueFromViewId(view.getId()));
         new AlertDialog.Builder(this).setView(picker).setTitle(getTitleFromViewId(view.getId()))
                 .setNegativeButton(android.R.string.cancel, null).setCancelable(true)
-                .setPositiveButton(android.R.string.yes, new OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        updateValue((Button) view, picker.getValue());
-                    }
-                }).show();
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> updateValue((Button) view, picker.getValue())).show();
     }
 
     private int getValueFromViewId(int id) {
@@ -900,12 +762,9 @@ public class MainActivity extends Activity {
                         .setTitle(R.string.rate_app)
                         .setMessage(R.string.rate_app_text)
                         .setPositiveButton(android.R.string.ok,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mHasRatedApp = true;
-                                        startActivity(rateAppIntent);
-                                    }
+                                (dialog, which) -> {
+                                    mHasRatedApp = true;
+                                    startActivity(rateAppIntent);
                                 }).setNegativeButton(R.string.later, null).setCancelable(true)
                         .show();
             }

@@ -1,5 +1,5 @@
 
-package com.sleepyduck.fingerboardtrainer;
+package se.sleepyduckstudio.logger;
 
 public class Log {
     public static final String TAG = "fingerboardtrainer";
@@ -7,5 +7,4 @@ public class Log {
     public static void d(String text) {
         android.util.Log.d(TAG, text);
     }
-
 }

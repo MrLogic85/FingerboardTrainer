@@ -6,7 +6,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
+import se.sleepyduckstudio.logger.Log;
 
 public class MainLayout extends ViewGroup {
     public static final String TAG = "fingerboardtrainer";
