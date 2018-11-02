@@ -96,7 +96,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mBillingManager = new BillingManager(this, this::activateInAppPurchases);
+        mBillingManager = BillingManager.Factory.getInstance(this, this::activateInAppPurchases);
 
         mServiceIntent = new Intent(this, TimerService.class);
         startService(mServiceIntent);
