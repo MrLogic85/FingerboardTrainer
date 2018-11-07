@@ -87,7 +87,7 @@
             android:onClick="onPauseClicked"
             android:text="@string/pause"
             android:textColor="@color/button_text"
-            android:textSize="@dimen/text_size"/>
+            android:textSize="@dimen/text_size" />
 
         <TextView
             android:id="@+id/textView"
@@ -99,45 +99,46 @@
             android:textSize="@dimen/text_size" />
 
         <RelativeLayout
+            android:id="@+id/ad_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/ad_container">
+            android:layout_height="wrap_content">
+
             <com.google.android.gms.ads.AdView
                 android:id="@+id/adView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 ads:adSize="BANNER"
                 ads:adUnitId="@string/banner_ad_unit_id" />
-            </RelativeLayout>
-        
+        </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/nav_menu_container"
             android:layout_width="@dimen/menu_width"
             android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/nav_menu"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:background="@color/nav_menu_background"
-            android:divider="@color/divider"
-            android:dividerHeight="1dp"
-            android:choiceMode="singleChoice"/>
-            
+            <ListView
+                android:id="@+id/nav_menu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="@color/nav_menu_background"
+                android:choiceMode="singleChoice"
+                android:divider="@color/divider"
+                android:dividerHeight="1dp" />
+
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
                 android:layout_margin="@dimen/margin"
-                android:src="@drawable/button_add_new"
                 android:background="@android:color/transparent"
-                android:onClick="onAddWorkoutClicked"/>
+                android:onClick="onAddWorkoutClicked"
+                android:src="@drawable/button_add_new" />
         </RelativeLayout>
 
         <Button
@@ -145,7 +146,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
-            android:onClick="onCloseNavMenuClicked"/>
+            android:onClick="onCloseNavMenuClicked" />
 
     </com.sleepyduck.fingerboardtrainer.MainLayout>
 </RelativeLayout>
