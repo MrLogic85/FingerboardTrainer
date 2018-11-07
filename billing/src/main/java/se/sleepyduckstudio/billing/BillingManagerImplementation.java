@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import se.sleepyduckstudio.logger.Log;
+import timber.log.Timber;
 
 class BillingManagerImplementation implements BillingManager {
 
@@ -40,12 +40,12 @@ class BillingManagerImplementation implements BillingManager {
     private ServiceConnection mBillingServiceConn = new ServiceConnection() {
         @Override
         public void onBindingDied(ComponentName name) {
-            se.sleepyduckstudio.logger.Log.d("Binding died");
+            Timber.d("Binding died");
         }
 
         @Override
         public void onNullBinding(ComponentName name) {
-            se.sleepyduckstudio.logger.Log.d("Null Binding");
+            Timber.d("Null Binding");
         }
 
         @Override
@@ -78,7 +78,7 @@ class BillingManagerImplementation implements BillingManager {
                         return true;
                     }
                 } else {
-                    Log.d("In app billing V3 is not supported");
+                    Timber.d("In app billing V3 is not supported");
                 }
                 return false;
             }
@@ -97,7 +97,7 @@ class BillingManagerImplementation implements BillingManager {
         if (mBillingService != null) {
             try {
                 int billingSupport = mBillingService.isBillingSupported(3, mPackageName, "inapp");
-                Log.d("In app billing V3 support = " + billingSupport);
+                Timber.d("In app billing V3 support = %s", billingSupport);
                 return billingSupport == 0;
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -109,10 +109,10 @@ class BillingManagerImplementation implements BillingManager {
     private boolean hasInAppItems() {
         Bundle skuDetails = getInAppItems();
         int response = skuDetails.getInt("RESPONSE_CODE");
-        Log.d("skuBundle result: " + response);
+        Timber.d("skuBundle result: %s", response);
         if (response == 0) {
             ArrayList<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
-            Log.d("responseList: " + responseList);
+            Timber.d("responseList: %s", responseList);
             for (String responseItem : responseList) {
                 mBillingItems.add(new BillingItem(responseItem));
             }
@@ -130,8 +130,8 @@ class BillingManagerImplementation implements BillingManager {
                 ArrayList<String> ownedSkus = ownedItems
                         .getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
                 setHasDonated(ownedSkus.size() > 0);
-                Log.d("User has " + (hasDonated() ? "" : "not ") + "donated");
-                Log.d("User had bought: " + ownedSkus);
+                Timber.d("User has %sdonated", (hasDonated() ? "" : "not "));
+                Timber.d("User had bought: %s", ownedSkus);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -212,7 +212,7 @@ class BillingManagerImplementation implements BillingManager {
         try {
             if (responseCode == 0) {
                 JSONObject jo = new JSONObject(purchaseData);
-                se.sleepyduckstudio.logger.Log.d("JSON RESULT: " + jo.toString());
+                Timber.d("JSON RESULT: %s", jo.toString());
                 String productId = jo.has("productId") ? jo.getString("productId") : null;
 
                 if (productId != null && (productId.equals("donate_repeat"))) {

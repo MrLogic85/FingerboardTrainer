@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import se.sleepyduckstudio.logger.Log;
+import timber.log.Timber;
 
 public class MainLayout extends ViewGroup {
     public static final String TAG = "fingerboardtrainer";
@@ -84,19 +84,19 @@ public class MainLayout extends ViewGroup {
                     break;
                 case R.id.start_button:
                     measuredWidth = MeasureSpec.makeMeasureSpec(unitSize * 2, MeasureSpec.EXACTLY);
-                    measuredHeight = MeasureSpec.makeMeasureSpec((int)(unitSize * 0.5),
+                    measuredHeight = MeasureSpec.makeMeasureSpec((int) (unitSize * 0.5),
                             MeasureSpec.EXACTLY);
                     view.measure(measuredWidth, measuredHeight);
                     break;
                 case R.id.pause_button:
                     measuredWidth = MeasureSpec.makeMeasureSpec(0, MeasureSpec.EXACTLY);
-                    measuredHeight = MeasureSpec.makeMeasureSpec((int)(unitSize * 0.5),
+                    measuredHeight = MeasureSpec.makeMeasureSpec((int) (unitSize * 0.5),
                             MeasureSpec.EXACTLY);
                     view.measure(measuredWidth, measuredHeight);
                     break;
                 case R.id.textView:
                     measuredWidth = MeasureSpec.makeMeasureSpec(unitSize * 2, MeasureSpec.EXACTLY);
-                    measuredHeight = MeasureSpec.makeMeasureSpec((int)(height - unitSize * 3.5),
+                    measuredHeight = MeasureSpec.makeMeasureSpec((int) (height - unitSize * 3.5),
                             MeasureSpec.EXACTLY);
                     view.measure(measuredWidth, measuredHeight);
                     break;
@@ -129,19 +129,19 @@ public class MainLayout extends ViewGroup {
                     break;
                 case R.id.start_button:
                     measuredWidth = MeasureSpec.makeMeasureSpec(unitSize * 2, MeasureSpec.EXACTLY);
-                    measuredHeight = MeasureSpec.makeMeasureSpec((int)(unitSize * 0.5),
+                    measuredHeight = MeasureSpec.makeMeasureSpec((int) (unitSize * 0.5),
                             MeasureSpec.EXACTLY);
                     view.measure(measuredWidth, measuredHeight);
                     break;
                 case R.id.pause_button:
                     measuredWidth = MeasureSpec.makeMeasureSpec(unitSize, MeasureSpec.EXACTLY);
-                    measuredHeight = MeasureSpec.makeMeasureSpec((int)(unitSize * 0.5),
+                    measuredHeight = MeasureSpec.makeMeasureSpec((int) (unitSize * 0.5),
                             MeasureSpec.EXACTLY);
                     view.measure(measuredWidth, measuredHeight);
                     break;
                 case R.id.textView:
                     measuredWidth = MeasureSpec.makeMeasureSpec(unitSize * 3, MeasureSpec.EXACTLY);
-                    measuredHeight = MeasureSpec.makeMeasureSpec((int)(height - unitSize * 2.5),
+                    measuredHeight = MeasureSpec.makeMeasureSpec((int) (height - unitSize * 2.5),
                             MeasureSpec.EXACTLY);
                     view.measure(measuredWidth, measuredHeight);
                     break;
@@ -153,13 +153,13 @@ public class MainLayout extends ViewGroup {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int end = (int) getResources().getDimension(R.dimen.menu_width);
         findViewById(R.id.nav_menu_container).measure(MeasureSpec.makeMeasureSpec(end, MeasureSpec.EXACTLY), heightMeasureSpec);
-        findViewById(R.id.navManuCloseButton).measure(MeasureSpec.makeMeasureSpec(width-end, MeasureSpec.EXACTLY), heightMeasureSpec);
+        findViewById(R.id.navManuCloseButton).measure(MeasureSpec.makeMeasureSpec(width - end, MeasureSpec.EXACTLY), heightMeasureSpec);
     }
 
     private void onAdMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
-        Log.d("adSize " + width + ", " + height);
+        Timber.d("adSize %d, %d", width, height);
         findViewById(R.id.ad_container).measure(
                 MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
@@ -217,14 +217,14 @@ public class MainLayout extends ViewGroup {
                     break;
                 case R.id.start_button:
                     view.layout(widthPadding, unitSize * 3, widthPadding + unitSize * 2,
-                            (int)(unitSize * 3.5));
+                            (int) (unitSize * 3.5));
                     break;
                 case R.id.pause_button:
                     view.layout(widthPadding + unitSize * 2, unitSize * 3, widthPadding + unitSize * 2,
-                            (int)(unitSize * 3.5));
+                            (int) (unitSize * 3.5));
                     break;
                 case R.id.textView:
-                    view.layout(widthPadding, (int)(unitSize * 3.5), widthPadding + unitSize * 2,
+                    view.layout(widthPadding, (int) (unitSize * 3.5), widthPadding + unitSize * 2,
                             height);
                     break;
             }
@@ -260,14 +260,14 @@ public class MainLayout extends ViewGroup {
                     break;
                 case R.id.start_button:
                     view.layout(widthPadding, unitSize * 2, widthPadding + unitSize * 2,
-                            (int)(unitSize * 2.5));
+                            (int) (unitSize * 2.5));
                     break;
                 case R.id.pause_button:
                     view.layout(widthPadding + unitSize * 2, unitSize * 2, widthPadding + unitSize * 3,
-                            (int)(unitSize * 2.5));
+                            (int) (unitSize * 2.5));
                     break;
                 case R.id.textView:
-                    view.layout(widthPadding, (int)(unitSize * 2.5), widthPadding + unitSize * 3,
+                    view.layout(widthPadding, (int) (unitSize * 2.5), widthPadding + unitSize * 3,
                             height);
                     break;
             }
@@ -275,23 +275,23 @@ public class MainLayout extends ViewGroup {
     }
 
     private void onNavMenuOpenLayout(boolean changed, int left, int top, int right, int bottom) {
-        int end = (int)(getResources().getDimension(R.dimen.menu_width));
+        int end = (int) (getResources().getDimension(R.dimen.menu_width));
         findViewById(R.id.nav_menu_container).layout(0, top, end, bottom);
         findViewById(R.id.navManuCloseButton).layout(end, top, right, bottom);
     }
 
     private void onNavMenuClosedLayout(boolean changed, int left, int top, int right, int bottom) {
-        int end = (int)(getResources().getDimension(R.dimen.menu_width));
+        int end = (int) (getResources().getDimension(R.dimen.menu_width));
         findViewById(R.id.nav_menu_container).layout(-end, top, 0, bottom);
         findViewById(R.id.navManuCloseButton).layout(end - right, top, 0, bottom);
     }
 
     private void onAdLayout(boolean changed, int left, int top, int right, int bottom) {
-        View adContainer= findViewById(R.id.ad_container);
+        View adContainer = findViewById(R.id.ad_container);
         int adTop = bottom - top - adContainer.getMeasuredHeight();
-        adContainer.layout(0, adTop, right-left, bottom-top);
-        Log.d("adLayout " + 0 + ", " + adTop + ", " + (right-left) + ", " + (bottom-top));
-        Log.d("adMeasuredSize " + adContainer.getMeasuredWidth() + ", " + adContainer.getMeasuredHeight());
+        adContainer.layout(0, adTop, right - left, bottom - top);
+        Timber.d("adLayout top: %d, bottom: %d, width: %d, height: %d ", 0, adTop, (right - left), (bottom - top));
+        Timber.d("adMeasuredSize %d, %d", adContainer.getMeasuredWidth(), adContainer.getMeasuredHeight());
     }
 
     public void setLayoutState(LayoutState layoutState) {

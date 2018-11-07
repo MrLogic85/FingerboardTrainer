@@ -41,7 +41,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import se.sleepyduckstudio.billing.BillingManager;
-import se.sleepyduckstudio.logger.Log;
+import timber.log.Timber;
 
 public class MainActivity extends Activity {
     private static final long AD_PAUSE_TIME = 300000;
@@ -79,12 +79,12 @@ public class MainActivity extends Activity {
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
         public void onServiceDisconnected(ComponentName name) {
-            se.sleepyduckstudio.logger.Log.d("onServiceDisconnected");
+            Timber.d("onServiceDisconnected");
             mBinder = null;
         }
 
         public void onServiceConnected(ComponentName name, IBinder service) {
-            se.sleepyduckstudio.logger.Log.d("onServiceConnected");
+            Timber.d("onServiceConnected");
             mBinder = (TimerBinder) service;
             mBinder.getService().setMainActivity(MainActivity.this);
         }
@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("onCreate");
+        Timber.d("onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -152,13 +152,13 @@ public class MainActivity extends Activity {
                 TextToSpeechManager.setHasEngine(true);
             }
         } else {
-            Log.d("MAinActivity.onActivityResult(): resultConde = " + resultCode);
+            Timber.d("MAinActivity.onActivityResult(): resultConde = %s", resultCode);
         }
     }
 
     @Override
     protected void onResume() {
-        Log.d("onResume");
+        Timber.d("onResume");
         bindService(mServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
         mAdView.resume();
         super.onResume();
@@ -166,7 +166,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        Log.d("onPause");
+        Timber.d("onPause");
         unbindService(mServiceConnection);
         mAdView.pause();
         super.onPause();
@@ -174,7 +174,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        Log.d("onDestroy");
+        Timber.d("onDestroy");
         stopService(mServiceIntent);
         mBillingManager.destroy(this);
 

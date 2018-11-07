@@ -1,13 +1,13 @@
 
 package com.sleepyduck.fingerboardtrainer;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import se.sleepyduckstudio.logger.Log;
+import timber.log.Timber;
 
 class TextToSpeechManager {
     private static boolean HasEngine = true;
@@ -46,10 +46,12 @@ class TextToSpeechManager {
     private UtteranceProgressListener mUttranceListener = new UtteranceProgressListener() {
 
         @Override
-        public void onStart(String utteranceId) {}
+        public void onStart(String utteranceId) {
+        }
 
         @Override
-        public void onError(String utteranceId) {}
+        public void onError(String utteranceId) {
+        }
 
         @Override
         public void onDone(String text) {
@@ -111,12 +113,12 @@ class TextToSpeechManager {
 
         try {
             File tmpfile = File.createTempFile("tts", ".wav");
-            Log.d("Synthesizing to file " + tmpfile.getAbsolutePath());
+            Timber.d("Synthesizing to file %s", tmpfile.getAbsolutePath());
             HashMap<String, String> map = new HashMap<String, String>();
             map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, text);
             int res = mTTS.synthesizeToFile(text, map, tmpfile.getAbsolutePath());
             if (res == TextToSpeech.SUCCESS) {
-                Log.d("Synthesizing success");
+                Timber.d("Synthesizing success");
                 mTTS.addSpeech(text, tmpfile.getAbsolutePath());
                 mSpeachMap.put(text, tmpfile);
             }
