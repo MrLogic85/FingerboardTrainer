@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import se.sleepyduckstudio.billing.BillingManager;
+import com.sleepyduck.billing.BillingManager;
 import timber.log.Timber;
 
 public class MainActivityOld extends Activity {

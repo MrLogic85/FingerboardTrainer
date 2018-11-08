@@ -1,14 +1,15 @@
-package se.sleepyduckstudio.billing;
+package com.sleepyduck.billing;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.NonNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
 
 public interface BillingManager {
 

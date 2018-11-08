@@ -1,5 +1,5 @@
 
-package se.sleepyduckstudio.billing;
+package com.sleepyduck.billing;
 
 import android.app.Activity;
 import android.app.PendingIntent;

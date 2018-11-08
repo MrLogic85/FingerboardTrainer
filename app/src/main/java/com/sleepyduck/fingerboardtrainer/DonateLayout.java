@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import se.sleepyduckstudio.billing.BillingManager;
+import com.sleepyduck.billing.BillingManager;
 
 public class DonateLayout extends FrameLayout {
     public DonateLayout(Context context) {

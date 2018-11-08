@@ -6,6 +6,17 @@
     app:startDestination="@id/listWorkoutsFragment">
 
     <fragment
+        android:id="@+id/logInFragment"
+        android:name="com.sleepyduck.fingerboardtrainer.auth.LogInFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_log_in">
+        <action
+            android:id="@+id/action_logInFragment_to_listWorkoutsFragment2"
+            app:clearTask="true"
+            app:destination="@id/listWorkoutsFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/listWorkoutsFragment"
         android:name="com.sleepyduck.fingerboardtrainer.ListWorkoutsFragment"
         android:label="@string/app_name"
