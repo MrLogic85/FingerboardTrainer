@@ -1,1 +1,1 @@
-include ':app', ':billing', ':logger'
+include ':app', ':billing'

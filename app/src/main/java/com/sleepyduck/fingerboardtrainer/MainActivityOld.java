@@ -43,7 +43,7 @@ import java.util.Set;
 import se.sleepyduckstudio.billing.BillingManager;
 import timber.log.Timber;
 
-public class MainActivity extends Activity {
+public class MainActivityOld extends Activity {
     private static final long AD_PAUSE_TIME = 300000;
     private static final int DONATE_REQUEST_CODE = 65486332;
     public static final int REQUEST_TTS = 544357324;
@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.d("onServiceConnected");
             mBinder = (TimerBinder) service;
-            mBinder.getService().setMainActivity(MainActivity.this);
+            mBinder.getService().setMainActivity(MainActivityOld.this);
         }
     };
 
@@ -94,7 +94,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         Timber.d("onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_old);
 
         mBillingManager = BillingManager.Factory.getInstance(this, this::activateInAppPurchases);
 
@@ -220,12 +220,15 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.delete_workout:
                 deleteWorkout();
-                break;
+                return true;
             case R.id.action_notification:
                 showNotificationPicker();
                 return true;
             case R.id.action_donate:
                 donateMoney();
+                return true;
+            case R.id.beta_test:
+                startActivity(new Intent(this, MainActivity.class));
                 return true;
         }
         return super.onMenuItemSelected(featureId, item);
@@ -383,7 +386,7 @@ public class MainActivity extends Activity {
                     break;
                 case R.id.mode_voice:
                     meNotification = Notification.VOICE;
-                    TextToSpeechManager.initializeTTSCheck(MainActivity.this);
+                    TextToSpeechManager.initializeTTSCheck(MainActivityOld.this);
                     break;
                 case R.id.mode_vibrate:
                     meNotification = Notification.VIBRATE;
@@ -539,7 +542,7 @@ public class MainActivity extends Activity {
             history.add(log);
             editor.putStringSet("history", history);
             if (!editor.commit()) {
-                // Toast.makeText(MainActivity.this,
+                // Toast.makeText(MainActivityOld.this,
                 // "Failed to save shared preferences",
                 // Toast.LENGTH_LONG).show();
             }

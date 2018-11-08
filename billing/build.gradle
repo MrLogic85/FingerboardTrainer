@@ -27,7 +27,6 @@ android {
 dependencies {
     api 'com.android.billingclient:billing:1.2'
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
-    api ktx
+    api 'androidx.core:core-ktx:1.0.1'
     api timber
 }

@@ -1,152 +1,25 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:keepScreenOn="true"
-    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.sleepyduck.fingerboardtrainer.MainLayout
-        android:id="@+id/main_layout"
+    <fragment
+        android:id="@+id/navHostFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:navGraph="@navigation/nav_graph" />
 
-        <Button
-            android:id="@+id/hang_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/hang"
-            android:gravity="center"
-            android:onClick="onChangeTimeClicked"
-            android:text="@string/initial_hang_time"
-            android:textSize="@dimen/text_size" />
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-        <Button
-            android:id="@+id/pause_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/pause"
-            android:gravity="center"
-            android:onClick="onChangeTimeClicked"
-            android:selectAllOnFocus="true"
-            android:text="@string/initial_pause_time"
-            android:textSize="@dimen/text_size" />
-
-        <Button
-            android:id="@+id/repetitions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/repeat"
-            android:gravity="center"
-            android:onClick="onChangeValueClicked"
-            android:selectAllOnFocus="true"
-            android:text="@string/initial_repetitions"
-            android:textSize="@dimen/text_size" />
-
-        <Button
-            android:id="@+id/rest_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rest"
-            android:gravity="center"
-            android:onClick="onChangeTimeClicked"
-            android:selectAllOnFocus="true"
-            android:text="@string/initial_rest_time"
-            android:textSize="@dimen/text_size" />
-
-        <Button
-            android:id="@+id/total_repetitions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/repeat_total"
-            android:gravity="center"
-            android:onClick="onChangeValueClicked"
-            android:selectAllOnFocus="true"
-            android:text="@string/initial_total_repetitions"
-            android:textSize="@dimen/text_size" />
-
-        <Button
-            android:id="@+id/start_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button"
-            android:gravity="center"
-            android:onClick="onStartClicked"
-            android:text="@string/start"
-            android:textColor="@color/button_text"
-            android:textSize="@dimen/text_size" />
-
-        <Button
-            android:id="@+id/pause_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_accent"
-            android:gravity="center"
-            android:onClick="onPauseClicked"
-            android:text="@string/pause"
-            android:textColor="@color/button_text"
-            android:textSize="@dimen/text_size" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@color/text_background"
-            android:gravity="center"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-            android:textSize="@dimen/text_size" />
-
-        <RelativeLayout
-            android:id="@+id/ad_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.gms.ads.AdView
-                android:id="@+id/adView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                ads:adSize="BANNER"
-                ads:adUnitId="@string/banner_ad_unit_id" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/nav_menu_container"
-            android:layout_width="@dimen/menu_width"
-            android:layout_height="match_parent">
-
-            <ListView
-                android:id="@+id/nav_menu"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:background="@color/nav_menu_background"
-                android:choiceMode="singleChoice"
-                android:divider="@color/divider"
-                android:dividerHeight="1dp" />
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="@dimen/margin"
-                android:background="@android:color/transparent"
-                android:onClick="onAddWorkoutClicked"
-                android:src="@drawable/button_add_new" />
-        </RelativeLayout>
-
-        <Button
-            android:id="@+id/navManuCloseButton"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:onClick="onCloseNavMenuClicked" />
-
-    </com.sleepyduck.fingerboardtrainer.MainLayout>
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

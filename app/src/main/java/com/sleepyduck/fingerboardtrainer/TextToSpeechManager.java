@@ -137,7 +137,7 @@ class TextToSpeechManager {
         if (checkIntent.resolveActivity(activity.getPackageManager()) == null) {
             Intent installIntent = new Intent();
             installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-            activity.startActivityForResult(installIntent, MainActivity.REQUEST_TTS);
+            activity.startActivityForResult(installIntent, MainActivityOld.REQUEST_TTS);
             HasEngine = false;
         }
     }

@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "title": "Easy Workout",
+      "description": "Short and quick workout",
+      "icon": "@drawable/icon_climb_1",
+      "timeSinceWorkout": "1d"
+    },
+    {
+      "title": "Medium Workout",
+      "description": "One long hang",
+      "icon": "@drawable/icon_climb_2",
+      "timeSinceWorkout": "4d"
+    },
+    {
+      "title": "Hard Workout",
+      "description": "Three by three",
+      "icon": "@drawable/icon_climb_3",
+      "timeSinceWorkout": "1m"
+    },
+    {
+      "title": "Extreme Workout",
+      "description": "Intense stamina training",
+      "icon": "@drawable/icon_climb_4",
+      "timeSinceWorkout": ""
+    }
+  ]
+}

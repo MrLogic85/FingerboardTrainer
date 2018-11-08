@@ -13,7 +13,7 @@ import java.util.Calendar;
 public class TimerService extends Service {
     public static final String TAG = "fingerboardtrainer";
 
-    private MainActivity mActivity;
+    private MainActivityOld mActivity;
     private TimerThread mTimerThread;
     private MediaPlayer mBeepMidPlayer;
     private MediaPlayer mBeepHighPlayer;
@@ -63,7 +63,7 @@ public class TimerService extends Service {
         return super.onUnbind(intent);
     }
 
-    public void setMainActivity(MainActivity activity) {
+    public void setMainActivity(MainActivityOld activity) {
         mActivity = activity;
     }
 

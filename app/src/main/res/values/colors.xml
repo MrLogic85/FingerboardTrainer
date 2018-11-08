@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="primaryColor">#8bc34a</color>
+    <color name="primaryLightColor">#bef67a</color>
+    <color name="primaryDarkColor">#5a9216</color>
+    <color name="secondaryColor">#40c4ff</color>
+    <color name="secondaryLightColor">#82f7ff</color>
+    <color name="secondaryDarkColor">#0094cc</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="secondaryTextColor">#000000</color>
+
+    <color name="climbAvatarColor1">#00e5ff</color>
+    <color name="climbAvatarColor2">#3d5afe</color>
+    <color name="climbAvatarColor3">#d500f9</color>
+    <color name="climbAvatarColor4">#ffea00</color>
+
+    <!-- OLD Colors -->
     <color name="primary_dark">#388E3C</color>
     <color name="primary">#4CAF50</color>
     <color name="primary_light">#C8E6C9</color>

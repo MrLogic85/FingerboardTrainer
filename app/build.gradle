@@ -36,9 +36,19 @@ dependencies {
 
     api project(':billing')
 
-    api 'com.google.android.gms:play-services-ads:17.0.0'
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    api ktx
+    api 'android.arch.navigation:navigation-common-ktx:1.0.0-alpha07'
+    api 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha07'
+    api 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha07'
+    api 'androidx.appcompat:appcompat:1.0.1'
+    api 'androidx.constraintlayout:constraintlayout:1.1.3'
+    api 'androidx.core:core-ktx:1.0.1'
+    api 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
+    api 'androidx.recyclerview:recyclerview:1.0.0'
+    api 'com.google.android.gms:play-services-ads:17.1.0'
+    api 'com.google.android.material:material:1.1.0-alpha01'
+
     api timber
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
 }

@@ -20,16 +20,7 @@ allprojects {
 }
 
 ext {
-    minVersion = 19
+    minVersion = 21
     targetVersion = 28
-
-    supportLibrary = '23.0.1'
-    supportLibraries = [
-            appCompat: "com.android.support:appcompat-v7:${supportLibrary}",
-            design   : "com.android.support:design:${supportLibrary}",
-    ]
-
-    ktx = 'androidx.core:core-ktx:1.0.1'
     timber = 'com.jakewharton.timber:timber:4.7.1' // Logger
-
 }
