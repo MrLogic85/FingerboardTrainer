@@ -28,11 +28,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp() = findNavController(R.id.navHostFragment).navigateUp()
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        findNavController(R.id.navHostFragment).navigateUp()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         requestHandlers.remove(REQUEST_CODE_SIGN_ID)?.invoke(data)

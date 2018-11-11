@@ -9,14 +9,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.google.firebase.Timestamp
 import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.fingerboardtrainer.asActivity
-import com.sleepyduck.fingerboardtrainer.data.Database
-import com.sleepyduck.fingerboardtrainer.data.Icon
-import com.sleepyduck.fingerboardtrainer.data.Workout
+import com.sleepyduck.fingerboardtrainer.data.*
 import com.sleepyduck.fingerboardtrainer.viewmodel.FirebaseUserViewModel
 import com.sleepyduck.fingerboardtrainer.viewmodel.WorkoutsViewModel
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.fragment_list_workouts.*
+import java.util.*
 
 class ListWorkoutsFragment : Fragment() {
 
@@ -27,14 +28,42 @@ class ListWorkoutsFragment : Fragment() {
 
     private val defaultWorkouts = {
         listOf(
-                Workout(title = "Easy Workout",
+                Workout(
+                        title = "Easy Workout",
                         description = "Shot quick workout",
-                        icon = Icon.GIRL_EASY_CLIMB.id),
+                        icon = Icon.GIRL_EASY_CLIMB.id,
+                        workout = WorkoutElement(
+                                type = WorkoutElementType.REPEAT.id,
+                                repeat = 3,
+                                workouts = listOf(
+                                        WorkoutElement(
+                                                type = WorkoutElementType.REPEAT.id,
+                                                repeat = 3,
+                                                workouts = listOf(
+                                                        WorkoutElement(
+                                                                type = WorkoutElementType.SAY.id,
+                                                                say = "Start",
+                                                                timeMillis = 10000L),
+                                                        WorkoutElement(
+                                                                type = WorkoutElementType.SAY.id,
+                                                                say = "Stop",
+                                                                timeMillis = 10000L)
+                                                )
+                                        ),
+                                        WorkoutElement(
+                                                type = WorkoutElementType.PAUSE.id,
+                                                timeMillis = 300000L
+                                        )
+                                )
+                        )
+                ),
 
                 Workout(title = "Hard Workout",
                         description = "Long hangs with short breaks",
-                        icon = Icon.GIRL_HARD_CLIMB.id)
-        )
+                        icon = Icon.GIRL_HARD_CLIMB.id,
+                        workout = WorkoutElement(
+                                type = WorkoutElementType.SAY.id,
+                                say = "No")))
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -57,7 +86,17 @@ class ListWorkoutsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView.adapter = adapter
-        recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL))
+        recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+
+        view.rootView?.addButton?.apply {
+            show()
+            setOnClickListener(onAddNewWorkoutClicked)
+        }
+    }
+
+    override fun onDestroyView() {
+        view?.rootView?.addButton?.hide()
+        super.onDestroyView()
     }
 
     private fun initializeViewModel() = asActivity {
@@ -68,4 +107,12 @@ class ListWorkoutsFragment : Fragment() {
             adapter.workouts = workouts
         })
     }
+
+    private val onAddNewWorkoutClicked = View.OnClickListener {
+        // TODO
+    }
 }
+
+private fun Int.stampMinutesToSeconds(): Timestamp = (this * 60).stampSecondsToMillis()
+
+private fun Int.stampSecondsToMillis(): Timestamp = Timestamp(Date(this * 1000L))
