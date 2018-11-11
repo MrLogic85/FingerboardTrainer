@@ -2,6 +2,15 @@
 <resources>
 
     <string name="app_name">Fingerboard Trainer</string>
+
+    <string name="last_workout_never">Never completed</string>
+    <string name="last_workout_today">Today</string>
+    <string name="last_workout_year">%1$dy %2$dm %3$dd</string>
+    <string name="last_workout_month">%1$dm %2$dd</string>
+    <string name="last_workout_day">%1$dd</string>
+    <string name="content_desc">Content Description</string>
+    <string name="try_the_new_app">Try the new app</string>
+
     <string name="action_notification">Feedback settings</string>
     <string name="action_change_name">Change name</string>
     <string name="action_delete">Delete workout</string>
@@ -45,10 +54,5 @@
 
     <string name="donate_text">Any donation will remove ads. It is up to you how much you want to give.</string>
     <string name="donate_again">Donate and show your support!</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="content_desc">Content Description</string>
-    <string name="try_the_new_app">Try the new app</string>
 
 </resources>

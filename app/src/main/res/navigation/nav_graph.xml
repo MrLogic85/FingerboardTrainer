@@ -3,13 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/listWorkoutsFragment">
+    app:startDestination="@id/logInFragment">
 
     <fragment
         android:id="@+id/logInFragment"
         android:name="com.sleepyduck.fingerboardtrainer.auth.LogInFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_log_in"></fragment>
+        tools:layout="@layout/fragment_log_in">
+        <action
+            android:id="@+id/navActionLoggedIn"
+            app:destination="@id/listWorkoutsFragment"
+            app:launchSingleTop="false"
+            app:popUpTo="@id/logInFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/listWorkoutsFragment"

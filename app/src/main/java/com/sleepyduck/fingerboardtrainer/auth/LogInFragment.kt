@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -18,14 +19,13 @@ import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.fingerboardtrainer.asActivity
 import com.sleepyduck.fingerboardtrainer.viewmodel.FirebaseUserViewModel
 
-
 class LogInFragment : Fragment() {
 
     private var firebaseUserViewModel: FirebaseUserViewModel? = null
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         asActivity {
             firebaseUserViewModel = ViewModelProviders.of(this)[FirebaseUserViewModel::class.java]
@@ -57,11 +57,11 @@ class LogInFragment : Fragment() {
         try {
             val account = task.getResult(ApiException::class.java)?.account
             when (account) {
-                null -> asActivity { logInFailed() }
+                null -> logInFailed()
                 else -> logInToGoogle()
             }
         } catch (e: ApiException) {
-            asActivity { logInFailed() }
+            logInFailed()
         }
     }
 
@@ -70,31 +70,33 @@ class LogInFragment : Fragment() {
             null -> {
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                 auth.signInWithCredential(credential)
-                        .addOnSuccessListener {
-                            asActivity {
-                                firebaseUserViewModel?.user?.value = it.user
-                                loggedInComplete()
-                            }
+                        .addOnSuccessListener { authRes ->
+                            firebaseUserViewModel?.user = authRes.user
+                            loggedInComplete()
                         }
                         .addOnFailureListener {
-                            asActivity { logInFailed() }
+                            logInFailed()
                         }
                         .addOnCanceledListener {
-                            asActivity { logInFailed() }
+                            logInFailed()
                         }
             }
 
-            else -> asActivity {
-                firebaseUserViewModel?.user?.value = auth.currentUser
+            else -> {
+                firebaseUserViewModel?.user = auth.currentUser
                 loggedInComplete()
             }
         }
     }
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_log_in, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.fragment_log_in, container, false)
+
+    private fun loggedInComplete() {
+        findNavController().navigate(R.id.navActionLoggedIn)
+    }
+
+    private fun logInFailed() {
+        TODO("Handle log in failure")
     }
 }

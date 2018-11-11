@@ -5,13 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackgroundBorderless"
-    android:padding="8dp">
+    android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:contentDescription="@string/content_desc"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,24 +19,23 @@
 
     <TextView
         android:id="@+id/workoutTitle"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        style="@style/TextAppearance.MaterialComponents.Headline5"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toStartOf="@+id/timeSinceWorkoutLabel"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/icon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@sample/workout.json/data/title" />
 
     <TextView
         android:id="@+id/workoutDescription"
-        style="@style/TextAppearance.MaterialComponents.Caption"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toStartOf="@+id/timeSinceWorkoutLabel"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/workoutTitle"
@@ -49,7 +47,6 @@
         style="@style/TextAppearance.MaterialComponents.Hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/workoutDescription"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/workoutTitle"

@@ -1,11 +1,20 @@
 package com.sleepyduck.fingerboardtrainer.data
 
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import java.util.*
 
 data class User(val name: String = "")
-data class Workout(val title: String = "")
+
+data class Workout(
+        val id: String = UUID.randomUUID().toString(),
+        val title: String = "",
+        val description: String = "",
+        val icon: Int = Icon.GIRL_EASY_CLIMB.id,
+        val lastWorkout: Timestamp? = null,
+        val timesRun: Int? = null)
 
 private const val USERS = "users"
 private const val WORKOUTS = "workouts"
@@ -29,7 +38,10 @@ class Database {
 
         val createUser = { workouts: List<Workout> ->
             workouts.forEach { workout ->
-                userDocument.collection(WORKOUTS).add(workout)
+                userDocument
+                        .collection(WORKOUTS)
+                        .document(workout.id)
+                        .set(workout)
             }
         }
 
