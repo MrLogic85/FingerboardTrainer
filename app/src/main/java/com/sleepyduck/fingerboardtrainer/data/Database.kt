@@ -1,33 +1,58 @@
 package com.sleepyduck.fingerboardtrainer.data
 
-import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import timber.log.Timber
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 
-data class Workout(val data: String)
+data class User(val name: String = "")
+data class Workout(val title: String = "")
 
-fun initlializeDatabase(context: Context) {
-    FirebaseApp.initializeApp(context)
-}
+private const val USERS = "users"
+private const val WORKOUTS = "workouts"
 
-fun workouts(): LiveData<Workout> {
-    val workout = mapOf("title" to "Workout",
-            "description" to "Workout description",
-            "icon" to 3)
+class Database {
+    private val firestore = FirebaseFirestore.getInstance()
 
-    val db = FirebaseFirestore.getInstance()
+    init {
+        firestore.firestoreSettings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+    }
 
-    db.collection("users")
 
-    FirebaseFirestore.getInstance()
-            .collection("workouts")
-            .add(workout)
-            .addOnCompleteListener {
-                Timber.d("Wrote Hello, World!: %b", it.isSuccessful)
+    fun getOrCreateWorkoutData(
+            user: FirebaseUser,
+            defaultWorkouts: () -> List<Workout>,
+            result: (List<Workout>) -> Unit) {
+
+        val userDocument = firestore.collection(USERS).document(user.uid)
+
+        val createUser = { workouts: List<Workout> ->
+            workouts.forEach { workout ->
+                userDocument.collection(WORKOUTS).add(workout)
             }
+        }
 
-    return MutableLiveData<Workout>()
+        userDocument
+                .get()
+                .addOnSuccessListener { userResult ->
+                    when {
+                        userResult.exists() -> {
+                            userDocument
+                                    .collection(WORKOUTS)
+                                    .get()
+                                    .addOnSuccessListener { querySnapshot ->
+                                        result(querySnapshot.toObjects(Workout::class.java))
+                                    }
+                        }
+
+                        else -> {
+                            userDocument.set(User(user.displayName ?: ""))
+                            val workouts = defaultWorkouts()
+                            createUser(workouts)
+                            result(workouts)
+                        }
+                    }
+                }
+    }
 }

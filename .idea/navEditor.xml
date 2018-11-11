@@ -57,8 +57,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-603" />
-                            <option name="y" value="-268" />
+                            <option name="x" value="-849" />
+                            <option name="y" value="-320" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -69,18 +69,9 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-796" />
-                            <option name="y" value="40" />
+                            <option name="x" value="-850" />
+                            <option name="y" value="35" />
                           </Point>
-                        </option>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_logInFragment_to_listWorkoutsFragment2">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
                         </option>
                       </LayoutPositions>
                     </value>

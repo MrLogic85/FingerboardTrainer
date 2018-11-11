@@ -1,9 +1,14 @@
 package com.sleepyduck.fingerboardtrainer
 
 import android.app.Application
-import com.sleepyduck.fingerboardtrainer.data.initlializeDatabase
-
+import com.google.firebase.FirebaseApp
 import timber.log.Timber
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.FirebaseFirestore
+
+
+
+
 
 class MainApplication : Application() {
 
@@ -14,6 +19,7 @@ class MainApplication : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-        initlializeDatabase(this)
+        FirebaseApp.initializeApp(this)
+
     }
 }
