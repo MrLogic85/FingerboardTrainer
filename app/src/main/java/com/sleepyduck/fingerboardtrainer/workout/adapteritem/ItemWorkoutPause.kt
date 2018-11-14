@@ -11,7 +11,7 @@ data class ItemWorkoutPause(
     val name: String
 ) : ActionItem(identifier) {
 
-    override val backgroundColor = R.color.secondaryDarkColor
+    override val backgroundColor = R.color.materialLight_Blue
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         super.onBindViewHolder(holder, payloads)

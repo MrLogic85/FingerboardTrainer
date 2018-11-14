@@ -12,7 +12,7 @@ data class ItemWorkoutSay(
     val say: String
 ) : ActionItem(identifier) {
 
-    override val backgroundColor = R.color.secondaryLightColor
+    override val backgroundColor = R.color.materialLight_Teal
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         super.onBindViewHolder(holder, payloads)

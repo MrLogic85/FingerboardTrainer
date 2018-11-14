@@ -14,7 +14,7 @@ data class ItemWorkoutRepeat(
     val items: List<ListUIAdapterItem>
 ) : GroupItem(identifier, items) {
 
-    override val backgroundColor = R.color.primaryLightColor
+    override val backgroundColor = R.color.materialLight_Grey
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         super.onBindViewHolder(holder, payloads)
