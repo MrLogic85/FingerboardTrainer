@@ -1,4 +1,4 @@
-package com.sleepyduck.fingerboardtrainer.auth
+package com.sleepyduck.fingerboardtrainer.login
 
 import android.content.Intent
 import android.os.Bundle

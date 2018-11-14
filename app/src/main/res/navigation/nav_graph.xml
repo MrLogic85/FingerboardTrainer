@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/logInFragment"
-        android:name="com.sleepyduck.fingerboardtrainer.auth.LogInFragment"
+        android:name="com.sleepyduck.fingerboardtrainer.login.LogInFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_log_in">
         <action
@@ -21,5 +21,19 @@
         android:id="@+id/listWorkoutsFragment"
         android:name="com.sleepyduck.fingerboardtrainer.listworkouts.ListWorkoutsFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_list_workouts" />
+        tools:layout="@layout/fragment_list_workouts">
+        <action
+            android:id="@+id/actionWorkout"
+            app:destination="@id/workoutFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/workoutFragment"
+        android:name="com.sleepyduck.fingerboardtrainer.workout.WorkoutFragment"
+        android:label="Workout"
+        tools:layout="@layout/fragment_workout">
+        <argument
+            android:name="workout"
+            android:defaultValue="null"
+            app:argType="reference" />
+    </fragment>
 </navigation>

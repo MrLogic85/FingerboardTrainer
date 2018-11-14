@@ -1,1 +1,1 @@
-include ':app', ':billing'
+include ':app', ':billing', ':listui'

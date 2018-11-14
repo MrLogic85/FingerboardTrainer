@@ -14,5 +14,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.40"
-        tools:context="com.sleepyduck.fingerboardtrainer.auth.LogInFragment" />
+        tools:context="com.sleepyduck.fingerboardtrainer.login.LogInFragment" />
 </androidx.constraintlayout.widget.ConstraintLayout>

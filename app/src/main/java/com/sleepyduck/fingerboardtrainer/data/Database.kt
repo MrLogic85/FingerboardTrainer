@@ -1,57 +1,33 @@
 package com.sleepyduck.fingerboardtrainer.data
 
+import android.os.Parcelable
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 data class User(val name: String = "")
 
+@Parcelize
 class Workout(
         val id: String = UUID.randomUUID().toString(),
         val title: String = "",
         val description: String = "",
         val icon: Int = Icon.GIRL_EASY_CLIMB.id,
         val lastWorkout: Timestamp? = null,
-        val timesRun: Int? = null,
-        var workout: WorkoutElement? = null) {
+        val timesRun: Int = 0,
+        var workoutData: List<WorkoutElement>? = null) : Parcelable
 
-    /*@PropertyName("workout")
-    private var _workoutJson: String = if (workout != null) Gson().toJson(workout) else ""
-
-    var workoutJson: String
-        get() = _workoutJson
-        set(value) {
-            _workout = Gson().fromJson(value, WorkoutElement::class.java)
-            _workoutJson = value
-        }
-
-    @Exclude
-    private var _workout: WorkoutElement? = workout
-
-    var workout: WorkoutElement?
-        get() {
-            if (_workout == null && !_workoutJson.isEmpty()) {
-                try {
-                    _workout = Gson().fromJson(_workoutJson, WorkoutElement::class.java)
-                } catch (e: JsonSyntaxException) {
-                }
-            }
-            return _workout
-        }
-        set(value) {
-            _workoutJson = Gson().toJson(value)
-            _workout = value
-        }*/
-}
-
+@Parcelize
 data class WorkoutElement(
         val type: Int = WorkoutElementType.PAUSE.id,
+        val name: String? = null,
         val repeat: Int? = null,
         val say: String? = null,
         val timeMillis: Long? = null,
-        val workouts: List<WorkoutElement>? = null)
+        val workouts: List<WorkoutElement>? = null) : Parcelable
 
 private const val USERS = "users"
 private const val WORKOUTS = "workouts"

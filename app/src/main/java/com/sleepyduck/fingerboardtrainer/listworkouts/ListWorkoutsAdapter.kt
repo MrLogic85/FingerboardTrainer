@@ -11,7 +11,10 @@ import com.sleepyduck.fingerboardtrainer.data.toIconRes
 import kotlinx.android.synthetic.main.list_item_workout.view.*
 import java.util.*
 
-class ListWorkoutsAdapter(workouts: List<Workout>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ListWorkoutsAdapter(
+        workouts: List<Workout>,
+        private val itemClickListener: (Workout) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var workouts: List<Workout> = workouts
         set(value) {
@@ -27,7 +30,7 @@ class ListWorkoutsAdapter(workouts: List<Workout>) : RecyclerView.Adapter<Recycl
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val workout = workouts[position]
-        holder.itemView.apply {
+        holder.itemView.run {
             icon.setImageResource(workout.icon.toIconRes())
             workoutTitle.text = workout.title
             workoutDescription.text = workout.description
@@ -35,6 +38,10 @@ class ListWorkoutsAdapter(workouts: List<Workout>) : RecyclerView.Adapter<Recycl
             when (workout.lastWorkout) {
                 null -> timeSinceWorkoutLabel.setText(R.string.last_workout_never)
                 else -> (Timestamp.now() - workout.lastWorkout).toReadableString(context)
+            }
+
+            setOnClickListener {
+                itemClickListener(workout)
             }
         }
     }

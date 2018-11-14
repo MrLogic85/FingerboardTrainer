@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="group_item_start_padding">48dp</dimen>
+    <dimen name="group_item_bottom_padding">24dp</dimen>
+    <dimen name="group_item_end_padding">12dp</dimen>
+</resources>
