@@ -1,6 +1,8 @@
 package com.sleepyduck.listui
 
-abstract class ActionItem(id: Long) : ListUIAdapterItem(id) {
-
+open class ActionItem(
+    id: Long,
+    selected: Boolean
+) : ListUIAdapterItem(id, selected) {
     override val layout: Int = R.layout.action_layout
 }

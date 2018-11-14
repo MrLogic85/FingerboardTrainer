@@ -9,18 +9,17 @@ import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.fingerboardtrainer.asActivity
 import com.sleepyduck.fingerboardtrainer.data.Workout
 import com.sleepyduck.fingerboardtrainer.data.WorkoutElement
-import com.sleepyduck.fingerboardtrainer.data.WorkoutElementType
-import com.sleepyduck.fingerboardtrainer.data.toWorkoutElementType
-import com.sleepyduck.fingerboardtrainer.workout.adapteritem.ItemWorkoutPause
-import com.sleepyduck.fingerboardtrainer.workout.adapteritem.ItemWorkoutRepeat
-import com.sleepyduck.fingerboardtrainer.workout.adapteritem.ItemWorkoutSay
+import com.sleepyduck.fingerboardtrainer.workout.adapteritem.toListUIAdapterItems
 import com.sleepyduck.listui.ListUIAdapter
-import com.sleepyduck.listui.ListUIAdapterItem
 import kotlinx.android.synthetic.main.fragment_workout.*
 
 class WorkoutFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_workout, container, false)
     }
 
@@ -28,37 +27,14 @@ class WorkoutFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val workout = arguments?.getParcelable<Workout>("workout")
-        val adapterItems = workout?.workoutData?.let { workoutData ->
-            mapWorkoutToAdapterItems(workoutData)
+        val adapterItems = workout?.workoutData?.let { workoutData: List<WorkoutElement> ->
+            workoutData.toListUIAdapterItems(workoutData[0].workouts?.get(0)?.workouts?.get(0))
         }
 
-        recyclerView.adapter = ListUIAdapter(adapterItems ?: listOf())
+        recyclerView.adapter = ListUIAdapter(recyclerView, adapterItems ?: listOf())
 
         asActivity {
             supportActionBar?.title = workout?.title
         }
     }
-
-    private fun mapWorkoutToAdapterItems(workoutElements: List<WorkoutElement>): List<ListUIAdapterItem> =
-        workoutElements.map { element ->
-            when (element.type.toWorkoutElementType()) {
-                WorkoutElementType.REPEAT -> ItemWorkoutRepeat(
-                    identifier = element.hashCode().toLong(),
-                    name = element.name ?: "",
-                    count = element.repeat ?: 0,
-                    items = mapWorkoutToAdapterItems(element.workouts ?: listOf())
-                )
-
-                WorkoutElementType.SAY -> ItemWorkoutSay(
-                    identifier = element.hashCode().toLong(),
-                    name = element.name ?: "",
-                    say = element.say ?: ""
-                )
-
-                WorkoutElementType.PAUSE -> ItemWorkoutPause(
-                    identifier = element.hashCode().toLong(),
-                    name = element.name ?: ""
-                )
-            }
-        }
 }
