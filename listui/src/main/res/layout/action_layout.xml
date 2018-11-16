@@ -2,8 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
     android:padding="8dp">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -22,8 +24,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toTopOf="@+id/action"
-        app:layout_constraintEnd_toStartOf="@+id/hint"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/icon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
@@ -37,8 +37,6 @@
         android:layout_marginStart="2dp"
         android:layout_marginTop="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/name"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/actionIcon"
         app:layout_constraintTop_toBottomOf="@+id/name"
         tools:text="@sample/action_item.json/data/say" />
@@ -48,13 +46,12 @@
         style="@style/TextAppearance.MaterialComponents.Hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:paddingStart="8dp"
         android:paddingEnd="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/action"
+        android:textSize="@dimen/hint_font_size_small"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/dragHandle"
-        app:layout_constraintTop_toTopOf="@+id/name"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="hint" />
 
     <androidx.appcompat.widget.AppCompatImageView

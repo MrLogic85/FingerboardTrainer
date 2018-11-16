@@ -4,30 +4,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.fingerboardtrainer.data.WorkoutElement
 import com.sleepyduck.fingerboardtrainer.toMillisString
+import com.sleepyduck.listui.ActionItem
 import com.sleepyduck.listui.ListUIAdapter
 import com.sleepyduck.listui.TextViewAnimator
 import kotlinx.android.synthetic.main.action_layout.view.*
 
-class ItemWorkoutSay(
-    workout: WorkoutElement,
+open class ItemWorkoutTimer(
+    val workout: WorkoutElement,
     private val adapter: ListUIAdapter
-) : ItemWorkoutTimer(workout, adapter) {
+) : ActionItem(workout.hashCode().toLong(), adapter) {
 
     companion object {
-        const val KEY_NAME = "name"
-        const val KEY_SAY = "say"
         const val KEY_TIME_LEFT = "timeLeft"
     }
 
-    var name = workout.name
+    var timeLeft = workout.timeMillis
         set(value) {
-            adapter.notifyItemChanged(this, KEY_NAME to field)
-            field = value
-        }
-
-    var say = workout.say
-        set(value) {
-            adapter.notifyItemChanged(this, KEY_SAY to field)
+            adapter.notifyItemChanged(this, KEY_TIME_LEFT to field)
             field = value
         }
 
@@ -35,27 +28,31 @@ class ItemWorkoutSay(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, payloads: Map<String, Any?>) {
         super.onBindViewHolder(holder, payloads)
-        holder.itemView.name.text = name
-        holder.itemView.action.text = say
-        holder.itemView.icon.setImageResource(R.drawable.icon_climb_1)
-        holder.itemView.actionIcon.setImageResource(R.drawable.icon_say)
+        holder.itemView.hint.text = timeLeft.toMillisString()
+
+        if (payloads.containsKey(KEY_SELECTED)) {
+            TextViewAnimator(holder.itemView.hint)
+                .animateTextSize(
+                    R.dimen.hint_font_size_small,
+                    R.dimen.hint_font_size_large,
+                    !selected
+                )
+        }
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is ItemWorkoutSay) return false
+        if (other !is ItemWorkoutTimer) return false
         if (!super.equals(other)) return false
 
-        if (name != other.name) return false
-        if (say != other.say) return false
+        if (timeLeft != other.timeLeft) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + (name?.hashCode() ?: 0)
-        result = 31 * result + (say?.hashCode() ?: 0)
+        result = 31 * result + (timeLeft?.hashCode() ?: 0)
         return result
     }
 }

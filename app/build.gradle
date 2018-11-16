@@ -45,7 +45,7 @@ dependencies {
     implementation 'android.arch.navigation:navigation-common-ktx:1.0.0-alpha07'
     implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha07'
     implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha07'
-    implementation 'androidx.appcompat:appcompat:1.0.1'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     implementation 'androidx.core:core-ktx:1.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0' // Todo, remove dependencies to this
@@ -59,7 +59,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     implementation 'com.google.firebase:firebase-core:16.0.5'
-    implementation 'com.google.firebase:firebase-firestore:17.1.2'
+    implementation 'com.google.firebase:firebase-firestore:17.1.3'
 
     implementation timber
 }
