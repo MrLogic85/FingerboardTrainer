@@ -9,14 +9,28 @@ import com.sleepyduck.listui.ListUIAdapter
 import com.sleepyduck.listui.TextViewAnimator
 import kotlinx.android.synthetic.main.action_layout.view.*
 
-open class ItemWorkoutTimer(
+open class ItemWorkout(
     val workout: WorkoutElement,
     private val adapter: ListUIAdapter
 ) : ActionItem(workout.hashCode().toLong(), adapter) {
 
     companion object {
+        const val KEY_NAME = "name"
+        const val KEY_SAY = "say"
         const val KEY_TIME_LEFT = "timeLeft"
     }
+
+    var name = workout.name
+        set(value) {
+            adapter.notifyItemChanged(this, KEY_NAME to field)
+            field = value
+        }
+
+    var say = workout.say
+        set(value) {
+            adapter.notifyItemChanged(this, KEY_SAY to field)
+            field = value
+        }
 
     var timeLeft = workout.timeMillis
         set(value) {
@@ -24,10 +38,10 @@ open class ItemWorkoutTimer(
             field = value
         }
 
-    override val backgroundColor = R.color.materialLight_Teal
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, payloads: Map<String, Any?>) {
         super.onBindViewHolder(holder, payloads)
+        holder.itemView.name.text = name
+        holder.itemView.action.text = say
         holder.itemView.hint.text = timeLeft.toMillisString()
 
         if (payloads.containsKey(KEY_SELECTED)) {
@@ -38,21 +52,5 @@ open class ItemWorkoutTimer(
                     !selected
                 )
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is ItemWorkoutTimer) return false
-        if (!super.equals(other)) return false
-
-        if (timeLeft != other.timeLeft) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + (timeLeft?.hashCode() ?: 0)
-        return result
     }
 }

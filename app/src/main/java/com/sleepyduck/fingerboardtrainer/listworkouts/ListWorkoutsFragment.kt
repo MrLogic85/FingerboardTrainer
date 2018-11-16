@@ -58,15 +58,10 @@ class ListWorkoutsFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
-        view.rootView?.addButton?.run {
-            show()
+        view.rootView?.actionButton?.run {
+            setImageResource(R.drawable.icon_add_white)
             setOnClickListener(onAddNewWorkoutClicked)
         }
-    }
-
-    override fun onDestroyView() {
-        view?.rootView?.addButton?.hide()
-        super.onDestroyView()
     }
 
     private fun initializeViewModel() = asActivity {

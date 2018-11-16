@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="path_add_horizontal">M5,11 h14 v2 h-14 z</string>
+    <string name="path_add_horizontal_as_play">M5,13 h14 v7 l-14,7 z</string>
+    <string name="path_add_vertical">M11,5 h2 v14 h-2 z</string>
+</resources>

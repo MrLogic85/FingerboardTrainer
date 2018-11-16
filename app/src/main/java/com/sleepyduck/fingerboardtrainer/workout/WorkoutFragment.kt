@@ -11,10 +11,10 @@ import com.sleepyduck.fingerboardtrainer.asActivity
 import com.sleepyduck.fingerboardtrainer.data.Workout
 import com.sleepyduck.fingerboardtrainer.workout.adapteritem.ItemWorkoutRepeat
 import com.sleepyduck.fingerboardtrainer.workout.adapteritem.ItemWorkoutSay
-import com.sleepyduck.fingerboardtrainer.workout.adapteritem.toListUIAdapterItems
 import com.sleepyduck.listui.ListUIAdapter
 import com.sleepyduck.listui.ListUIAdapterItem
 import com.sleepyduck.listui.setupForListUIAdapter
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.fragment_workout.*
 
 class WorkoutFragment : Fragment() {
@@ -79,6 +79,10 @@ class WorkoutFragment : Fragment() {
 
         asActivity {
             supportActionBar?.title = workout?.title
+        }
+
+        view.rootView?.actionButton?.run {
+            setImageResource(R.drawable.icon_play_white)
         }
     }
 }

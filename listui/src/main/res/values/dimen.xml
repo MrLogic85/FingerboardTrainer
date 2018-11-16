@@ -5,5 +5,5 @@
     <dimen name="group_item_end_padding">12dp</dimen>
 
     <dimen name="hint_font_size_small">12sp</dimen>
-    <dimen name="hint_font_size_large">28dp</dimen>
+    <dimen name="hint_font_size_large">32dp</dimen>
 </resources>

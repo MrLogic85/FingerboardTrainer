@@ -30,13 +30,11 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addButton"
+        android:id="@+id/actionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        android:src="@drawable/icon_add_white"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        tools:src="@drawable/icon_add_white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
