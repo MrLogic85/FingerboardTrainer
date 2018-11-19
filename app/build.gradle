@@ -36,7 +36,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation project(':billing')
-    implementation project(':listui')
+    implementation project(':datamodel')
+    implementation project(':workoutui')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 

@@ -1,13 +1,13 @@
 package com.sleepyduck.fingerboardtrainer.workout
 
-import com.sleepyduck.fingerboardtrainer.data.WorkoutElement
-import com.sleepyduck.fingerboardtrainer.data.WorkoutElementType
-import com.sleepyduck.fingerboardtrainer.data.toWorkoutElementType
+import com.sleepyduck.datamodel.WorkoutElement
+import com.sleepyduck.datamodel.WorkoutElementType
+import com.sleepyduck.datamodel.toWorkoutElementType
 import com.sleepyduck.fingerboardtrainer.workout.adapteritem.ItemWorkoutPause
 import com.sleepyduck.fingerboardtrainer.workout.adapteritem.ItemWorkoutRepeat
 import com.sleepyduck.fingerboardtrainer.workout.adapteritem.ItemWorkoutSay
-import com.sleepyduck.listui.ListUIAdapter
-import com.sleepyduck.listui.ListUIAdapterItem
+import com.sleepyduck.workoutui.ListUIAdapter
+import com.sleepyduck.workoutui.ListUIAdapterItem
 
 fun List<WorkoutElement>.toListUIAdapterItems(adapter: ListUIAdapter): List<ListUIAdapterItem> =
     map { it.toListUIAdapterItem(adapter) }

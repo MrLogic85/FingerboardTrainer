@@ -3,8 +3,8 @@ package com.sleepyduck.fingerboardtrainer.workout.adapteritem
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.sleepyduck.fingerboardtrainer.R
-import com.sleepyduck.fingerboardtrainer.data.WorkoutElement
-import com.sleepyduck.listui.ListUIAdapter
+import com.sleepyduck.datamodel.WorkoutElement
+import com.sleepyduck.workoutui.ListUIAdapter
 import kotlinx.android.synthetic.main.action_layout.view.*
 
 class ItemWorkoutPause(

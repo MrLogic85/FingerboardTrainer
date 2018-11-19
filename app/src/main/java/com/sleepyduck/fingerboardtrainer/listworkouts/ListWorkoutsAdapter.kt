@@ -5,9 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.Timestamp
+import com.sleepyduck.datamodel.Workout
 import com.sleepyduck.fingerboardtrainer.R
-import com.sleepyduck.fingerboardtrainer.data.Workout
-import com.sleepyduck.fingerboardtrainer.data.toIconRes
+import com.sleepyduck.workoutui.toIconRes
 import kotlinx.android.synthetic.main.list_item_workout.view.*
 import java.util.*
 
@@ -35,9 +35,10 @@ class ListWorkoutsAdapter(
             workoutTitle.text = workout.title
             workoutDescription.text = workout.description
 
-            when (workout.lastWorkout) {
+            val lastWorkout = workout.lastWorkout
+            when (lastWorkout) {
                 null -> timeSinceWorkoutLabel.setText(R.string.last_workout_never)
-                else -> (Timestamp.now() - workout.lastWorkout).toReadableString(context)
+                else -> (Date().time - lastWorkout).toReadableString(context)
             }
 
             setOnClickListener {
@@ -51,9 +52,9 @@ class ListWorkoutsAdapter(
 private operator fun Timestamp.minus(other: Timestamp) =
         Timestamp(Date((nanoseconds - other.nanoseconds) / 1000L))
 
-private fun Timestamp.toReadableString(context: Context): String {
+private fun Long.toReadableString(context: Context): String {
     val calendar = Calendar.getInstance()
-    calendar.timeInMillis = nanoseconds / 1000L
+    calendar.timeInMillis = this
     val year: Int = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)

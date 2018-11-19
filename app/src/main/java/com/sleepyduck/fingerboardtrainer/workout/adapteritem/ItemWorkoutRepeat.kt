@@ -3,11 +3,11 @@ package com.sleepyduck.fingerboardtrainer.workout.adapteritem
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.sleepyduck.fingerboardtrainer.R
-import com.sleepyduck.fingerboardtrainer.data.WorkoutElement
+import com.sleepyduck.datamodel.WorkoutElement
 import com.sleepyduck.fingerboardtrainer.workout.toListUIAdapterItems
-import com.sleepyduck.listui.ListUIAdapter
-import com.sleepyduck.listui.ListUIAdapterItem
-import com.sleepyduck.listui.setupForListUIAdapter
+import com.sleepyduck.workoutui.ListUIAdapter
+import com.sleepyduck.workoutui.ListUIAdapterItem
+import com.sleepyduck.workoutui.setupForListUIAdapter
 import kotlinx.android.synthetic.main.action_layout.view.*
 import kotlinx.android.synthetic.main.group_item_layout.view.*
 
@@ -25,7 +25,7 @@ class ItemWorkoutRepeat(
         this@ItemWorkoutRepeat.items = items
     }
 
-    override val layout: Int = com.sleepyduck.listui.R.layout.group_item_layout
+    override val layout: Int = com.sleepyduck.workoutui.R.layout.group_item_layout
 
     override val backgroundColor = R.color.materialLight_Grey
 

@@ -5,7 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/FingerboardTrainer.iml" filepath="$PROJECT_DIR$/FingerboardTrainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/billing/billing.iml" filepath="$PROJECT_DIR$/billing/billing.iml" />
-      <module fileurl="file://$PROJECT_DIR$/listui/listui.iml" filepath="$PROJECT_DIR$/listui/listui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/datamodel/datamodel.iml" filepath="$PROJECT_DIR$/datamodel/datamodel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/resources/resources.iml" filepath="$PROJECT_DIR$/resources/resources.iml" />
+      <module fileurl="file://$PROJECT_DIR$/workoutui/workoutui.iml" filepath="$PROJECT_DIR$/workoutui/workoutui.iml" />
     </modules>
   </component>
 </project>

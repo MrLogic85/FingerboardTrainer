@@ -1,33 +1,11 @@
 package com.sleepyduck.fingerboardtrainer.data
 
-import android.os.Parcelable
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
-import kotlinx.android.parcel.Parcelize
-import java.util.*
+import com.sleepyduck.datamodel.Workout
 
 data class User(val name: String = "")
-
-@Parcelize
-class Workout(
-        val id: String = UUID.randomUUID().toString(),
-        val title: String = "",
-        val description: String = "",
-        val icon: Int = Icon.GIRL_EASY_CLIMB.id,
-        val lastWorkout: Timestamp? = null,
-        val timesRun: Int = 0,
-        var workoutData: List<WorkoutElement>? = null) : Parcelable
-
-@Parcelize
-data class WorkoutElement(
-        val type: Int = WorkoutElementType.PAUSE.id,
-        val name: String? = null,
-        val repeat: Int? = null,
-        val say: String? = null,
-        val timeMillis: Long? = null,
-        val workouts: List<WorkoutElement>? = null) : Parcelable
 
 private const val USERS = "users"
 private const val WORKOUTS = "workouts"

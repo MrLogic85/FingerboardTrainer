@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.fingerboardtrainer.asActivity
 import com.sleepyduck.fingerboardtrainer.data.Database
-import com.sleepyduck.fingerboardtrainer.data.Workout
-import com.sleepyduck.fingerboardtrainer.data.createDefaultWorkouts
+import com.sleepyduck.datamodel.Workout
+import com.sleepyduck.datamodel.createDefaultWorkouts
 import com.sleepyduck.fingerboardtrainer.viewmodel.FirebaseUserViewModel
 import com.sleepyduck.fingerboardtrainer.viewmodel.WorkoutsViewModel
 import kotlinx.android.synthetic.main.activity_main.view.*

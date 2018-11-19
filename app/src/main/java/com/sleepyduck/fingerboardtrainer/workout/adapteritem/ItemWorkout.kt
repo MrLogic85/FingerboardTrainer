@@ -2,11 +2,11 @@ package com.sleepyduck.fingerboardtrainer.workout.adapteritem
 
 import androidx.recyclerview.widget.RecyclerView
 import com.sleepyduck.fingerboardtrainer.R
-import com.sleepyduck.fingerboardtrainer.data.WorkoutElement
+import com.sleepyduck.datamodel.WorkoutElement
 import com.sleepyduck.fingerboardtrainer.toMillisString
-import com.sleepyduck.listui.ActionItem
-import com.sleepyduck.listui.ListUIAdapter
-import com.sleepyduck.listui.TextViewAnimator
+import com.sleepyduck.workoutui.ActionItem
+import com.sleepyduck.workoutui.ListUIAdapter
+import com.sleepyduck.workoutui.TextViewAnimator
 import kotlinx.android.synthetic.main.action_layout.view.*
 
 open class ItemWorkout(
