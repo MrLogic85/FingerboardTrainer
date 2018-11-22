@@ -1,27 +1,27 @@
-package com.sleepyduck.fingerboardtrainer.workout.adapteritem
+package com.sleepyduck.workoutui.adapteritem
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.datamodel.WorkoutElement
-import com.sleepyduck.fingerboardtrainer.workout.toListUIAdapterItems
 import com.sleepyduck.workoutui.ListUIAdapter
 import com.sleepyduck.workoutui.ListUIAdapterItem
+import com.sleepyduck.workoutui.R
 import com.sleepyduck.workoutui.setupForListUIAdapter
+import com.sleepyduck.workoutui.toListUIAdapterItems
 import kotlinx.android.synthetic.main.action_layout.view.*
 import kotlinx.android.synthetic.main.group_item_layout.view.*
 
-
 class ItemWorkoutRepeat(
-    val workout: WorkoutElement,
-    adapter: ListUIAdapter
-) : ListUIAdapterItem(workout.hashCode().toLong(), adapter) {
+    workout: WorkoutElement,
+    adapter: ListUIAdapter,
+    onItemClickListener: (ItemWorkout) -> Unit?
+) : ItemWorkout(workout, adapter, onItemClickListener) {
 
     var items = listOf<ListUIAdapterItem>()
         private set
 
     private val innerAdapter = ListUIAdapter().apply {
-        items = workout.workouts?.toListUIAdapterItems(this) ?: listOf()
+        items = workout.workouts?.toListUIAdapterItems(this, onItemClickListener) ?: listOf()
         this@ItemWorkoutRepeat.items = items
     }
 
@@ -41,6 +41,5 @@ class ItemWorkoutRepeat(
 
         holder.itemView.actionGroup.visibility = View.GONE
         holder.itemView.hint.visibility = View.GONE
-        holder.itemView.icon.setImageResource(com.sleepyduck.fingerboardtrainer.R.drawable.icon_repeat)
     }
 }

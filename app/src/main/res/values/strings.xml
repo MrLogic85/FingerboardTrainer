@@ -3,6 +3,10 @@
 
     <string name="app_name">Fingerboard Trainer</string>
 
+    <string name="dialog_title_repeat">Edit Repeat Action</string>
+    <string name="dialog_title_say">Edit Say Action</string>
+    <string name="dialog_title_pause">Edit Pause Action</string>
+
     <string name="last_workout_never">Never completed</string>
     <string name="last_workout_today">Today</string>
     <string name="last_workout_year">%1$dy %2$dm %3$dd</string>

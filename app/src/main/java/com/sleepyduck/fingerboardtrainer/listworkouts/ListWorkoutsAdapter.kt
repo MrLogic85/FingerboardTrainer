@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.Timestamp
 import com.sleepyduck.datamodel.Workout
 import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.workoutui.toIconRes
@@ -48,9 +47,6 @@ class ListWorkoutsAdapter(
     }
 
 }
-
-private operator fun Timestamp.minus(other: Timestamp) =
-        Timestamp(Date((nanoseconds - other.nanoseconds) / 1000L))
 
 private fun Long.toReadableString(context: Context): String {
     val calendar = Calendar.getInstance()

@@ -1,15 +1,16 @@
-package com.sleepyduck.fingerboardtrainer.workout.adapteritem
+package com.sleepyduck.workoutui.adapteritem
 
 import androidx.recyclerview.widget.RecyclerView
-import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.datamodel.WorkoutElement
 import com.sleepyduck.workoutui.ListUIAdapter
+import com.sleepyduck.workoutui.R
 import kotlinx.android.synthetic.main.action_layout.view.*
 
 class ItemWorkoutSay(
     workout: WorkoutElement,
-    adapter: ListUIAdapter
-) : ItemWorkout(workout, adapter) {
+    adapter: ListUIAdapter,
+    onItemClickListener: (ItemWorkout) -> Unit?
+) : ItemWorkout(workout, adapter, onItemClickListener) {
 
     override val backgroundColor = R.color.materialLight_Teal
 
@@ -17,7 +18,6 @@ class ItemWorkoutSay(
         super.onBindViewHolder(holder, payloads)
         holder.itemView.name.text = name
         holder.itemView.action.text = say
-        holder.itemView.icon.setImageResource(R.drawable.icon_climb_1)
         holder.itemView.actionIcon.setImageResource(R.drawable.icon_say)
     }
 }

@@ -6,14 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.afollestad.materialdialogs.MaterialDialog
+import com.sleepyduck.datamodel.Workout
 import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.fingerboardtrainer.asActivity
-import com.sleepyduck.datamodel.Workout
-import com.sleepyduck.fingerboardtrainer.workout.adapteritem.ItemWorkoutRepeat
-import com.sleepyduck.fingerboardtrainer.workout.adapteritem.ItemWorkoutSay
 import com.sleepyduck.workoutui.ListUIAdapter
 import com.sleepyduck.workoutui.ListUIAdapterItem
+import com.sleepyduck.workoutui.adapteritem.ItemWorkout
+import com.sleepyduck.workoutui.adapteritem.ItemWorkoutRepeat
+import com.sleepyduck.workoutui.adapteritem.ItemWorkoutSay
 import com.sleepyduck.workoutui.setupForListUIAdapter
+import com.sleepyduck.workoutui.toListUIAdapterItems
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.fragment_workout.*
 
@@ -56,6 +59,20 @@ class WorkoutFragment : Fragment() {
         }, 21000)
     }
 
+    private val onItemClickListener = { workout: ItemWorkout ->
+        asActivity {
+            MaterialDialog(this).show {
+                setWorkout(workout.workout)
+                positiveButton {
+
+                }
+                negativeButton {
+
+                }
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -72,7 +89,10 @@ class WorkoutFragment : Fragment() {
         recyclerView.setupForListUIAdapter()
 
         recyclerView.adapter = ListUIAdapter().also { adapter ->
-            workoutItems = workout?.workoutData?.toListUIAdapterItems(adapter) ?: listOf()
+            workoutItems = workout?.workoutData?.toListUIAdapterItems(
+                adapter,
+                onItemClickListener
+            ) ?: listOf()
             adapter.items = workoutItems
         }
 

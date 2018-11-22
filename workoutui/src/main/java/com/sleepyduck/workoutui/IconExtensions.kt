@@ -11,6 +11,7 @@ fun WorkoutIcon.iconRes() = when (this) {
     WorkoutIcon.GIRL_NORMAL_CLIMB -> R.drawable.icon_climb_2
     WorkoutIcon.GIRL_MEDIUM_CLIMB -> R.drawable.icon_climb_3
     WorkoutIcon.GIRL_HARD_CLIMB -> R.drawable.icon_climb_4
+    WorkoutIcon.REPEAT -> R.drawable.icon_repeat
 }
 
 fun Int.toIconRes() = toIcon().iconRes()

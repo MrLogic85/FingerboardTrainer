@@ -9,7 +9,11 @@
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:textColorHint">@color/primaryLightColor</item>
         <item name="android:textColorSecondary">@color/secondaryTextColor</item>
+        <item name="buttonStyle">@style/PositiveButton</item>
     </style>
+
+    <style name="PositiveButton" parent="Widget.AppCompat.Button.Borderless.Colored" />
 
 </resources>
