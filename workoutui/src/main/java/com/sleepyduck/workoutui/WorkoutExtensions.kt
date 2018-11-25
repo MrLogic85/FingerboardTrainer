@@ -39,7 +39,7 @@ fun WorkoutElement.toListUIAdapterItem(
         )
     }
 
-fun Long?.toMillisString() =
+fun Long.toMillisString() =
     when (this) {
         null -> ""
 
@@ -53,25 +53,10 @@ fun Long?.toMillisString() =
         }
     }
 
-fun Long?.toEditableString() =
-    when (this) {
-        null -> ""
+data class TimeStamp(val hours: Int, val minutes: Int, val seconds: Int)
 
-        else -> {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = this
-            when {
-                this > 60000L -> "${calendar.get(Calendar.MINUTE)}:${calendar.get(Calendar.SECOND)}"
-                else -> "${calendar.get(Calendar.SECOND)}"
-            }
-        }
-    }
-
-fun String.fromEdiatbleStringToMillis(): Long {
-    val splitString = split(":")
-    return when (splitString.size) {
-        2 -> splitString[1].toLong() * 60000L + splitString[0].toLong() * 1000L
-        1 -> splitString[0].toLong() * 1000L
-        else -> 0L
-    }
-}
+fun Long.toTimeStampe(): TimeStamp = TimeStamp(
+    (this / 3600000L % 24).toInt(),
+    (this / 60000L % 60).toInt(),
+    (this / 1000L % 60).toInt()
+)

@@ -59,7 +59,7 @@ open class ItemWorkout(
         holder.itemView.icon.setImageResource(icon.toIconRes())
         holder.itemView.name.text = name
         holder.itemView.action.text = say
-        holder.itemView.hint.text = timeLeft.toMillisString()
+        holder.itemView.hint.text = timeLeft?.toMillisString() ?: count?.toString()
 
         if (payloads.containsKey(KEY_SELECTED)) {
             TextViewAnimator(holder.itemView.hint)

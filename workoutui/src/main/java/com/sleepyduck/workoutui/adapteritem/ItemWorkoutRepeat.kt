@@ -40,6 +40,5 @@ class ItemWorkoutRepeat(
         }
 
         holder.itemView.actionGroup.visibility = View.GONE
-        holder.itemView.hint.visibility = View.GONE
     }
 }

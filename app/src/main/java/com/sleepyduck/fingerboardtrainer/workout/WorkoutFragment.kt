@@ -62,12 +62,8 @@ class WorkoutFragment : Fragment() {
     private val onItemClickListener = { workout: ItemWorkout ->
         asActivity {
             MaterialDialog(this).show {
-                setWorkout(workout.workout)
-                positiveButton {
-
-                }
-                negativeButton {
-
+                editWorkout(workout.workout) {
+                    // TODO handle workout result
                 }
             }
         }

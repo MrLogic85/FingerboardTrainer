@@ -6,46 +6,51 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/iconDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Icon"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
         app:layout_constraintBottom_toBottomOf="@+id/icon"
         app:layout_constraintStart_toStartOf="@+id/nameDesc"
         app:layout_constraintTop_toTopOf="@+id/icon" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/nameDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Name"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
         app:layout_constraintBaseline_toBaselineOf="@+id/name"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/sayDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Say"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
         app:layout_constraintBaseline_toBaselineOf="@+id/say"
         app:layout_constraintStart_toStartOf="@+id/nameDesc" />
 
-    <TextView
-        android:id="@+id/timeDesc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Time"
-        app:layout_constraintBaseline_toBaselineOf="@+id/time"
-        app:layout_constraintStart_toStartOf="@+id/nameDesc" />
-
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/countDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Count"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
         app:layout_constraintBaseline_toBaselineOf="@+id/count"
+        app:layout_constraintStart_toStartOf="@+id/nameDesc" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/timeDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+        app:layout_constraintBaseline_toBaselineOf="@+id/time"
         app:layout_constraintStart_toStartOf="@+id/nameDesc" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -59,13 +64,15 @@
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
         android:hint="Name"
         android:inputType="textNoSuggestions"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/barrier"
         app:layout_constraintTop_toBottomOf="@+id/icon"
         tools:text="Name" />
 
@@ -81,17 +88,6 @@
         tools:text="Say" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/time"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Time"
-        android:inputType="time"
-        app:layout_constraintEnd_toEndOf="@+id/name"
-        app:layout_constraintStart_toStartOf="@+id/name"
-        app:layout_constraintTop_toBottomOf="@+id/say"
-        tools:text="05:00" />
-
-    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/count"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -99,8 +95,84 @@
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="@+id/name"
         app:layout_constraintStart_toStartOf="@+id/name"
-        app:layout_constraintTop_toBottomOf="@+id/time"
+        app:layout_constraintTop_toBottomOf="@+id/say"
         tools:text="3" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Time"
+        android:inputType="time"
+        app:layout_constraintEnd_toEndOf="@+id/name"
+        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/count"
+        tools:text="05:00" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/timeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@+id/count"
+        app:layout_constraintTop_toBottomOf="@+id/time">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/timeHours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:text="h"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/timeMinutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="00"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:text="m"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/timeSeconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="00"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:text="s"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textSize="12sp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="iconDesc,nameDesc,sayDesc,timeDesc,countDesc" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/iconGroup"

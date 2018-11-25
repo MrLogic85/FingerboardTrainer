@@ -6,6 +6,7 @@
     <string name="dialog_title_repeat">Edit Repeat Action</string>
     <string name="dialog_title_say">Edit Say Action</string>
     <string name="dialog_title_pause">Edit Pause Action</string>
+    <string name="number_two_values_no_decimals">%1$02d</string>
 
     <string name="last_workout_never">Never completed</string>
     <string name="last_workout_today">Today</string>

@@ -3,7 +3,7 @@ package com.sleepyduck.datamodel
 fun createDefaultWorkouts() = listOf(
     Workout(
         title = "Easy Workout",
-        description = "Shot quick workout",
+        description = "Short quick workout",
         icon = WorkoutIcon.GIRL_EASY_CLIMB.id,
         workoutData = listOf(
             WorkoutElement(
