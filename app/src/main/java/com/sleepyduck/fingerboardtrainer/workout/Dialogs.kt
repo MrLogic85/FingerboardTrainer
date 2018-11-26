@@ -11,7 +11,7 @@ import com.sleepyduck.datamodel.toWorkoutElementType
 import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.workoutui.TimeStamp
 import com.sleepyduck.workoutui.toIconRes
-import com.sleepyduck.workoutui.toTimeStampe
+import com.sleepyduck.workoutui.toTimeStamp
 import kotlinx.android.synthetic.main.dialog_edit_time.view.*
 import kotlinx.android.synthetic.main.dialog_edit_workout.view.*
 
@@ -26,18 +26,19 @@ fun MaterialDialog.editWorkout(
     view.icon.setImageResource(workout.icon.toIconRes())
     view.name.setText(workout.name)
     view.say.setText(workout.say)
-    view.count.setText("${workout.repeat ?: 0}")
+    view.count.setText("${workout.repeat}")
 
-    val valueId = R.string.number_two_values_no_decimals
+    val valueId = R.string.dialog_number_two_values_no_decimals
     val setTime = { timeStamp: TimeStamp ->
         view.timeHours.text = context.getString(valueId, timeStamp.hours)
         view.timeMinutes.text = context.getString(valueId, timeStamp.minutes)
         view.timeSeconds.text = context.getString(valueId, timeStamp.seconds)
     }
-    setTime((workout.timeMillis ?: 0).toTimeStampe())
+    setTime(workout.timeMillis.toTimeStamp())
 
     view.timeLayout.setOnClickListener {
         MaterialDialog(context)
+            .title(res = R.string.dialog_title_edit_time)
             .pickTime(
                 view.timeHours.text.toString().toInt(),
                 view.timeMinutes.text.toString().toInt(),

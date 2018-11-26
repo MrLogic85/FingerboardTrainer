@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.afollestad.materialdialogs.MaterialDialog
 import com.sleepyduck.datamodel.Workout
+import com.sleepyduck.datamodel.WorkoutElement
 import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.fingerboardtrainer.asActivity
 import com.sleepyduck.workoutui.ListUIAdapter
@@ -15,6 +16,7 @@ import com.sleepyduck.workoutui.ListUIAdapterItem
 import com.sleepyduck.workoutui.adapteritem.ItemWorkout
 import com.sleepyduck.workoutui.adapteritem.ItemWorkoutRepeat
 import com.sleepyduck.workoutui.adapteritem.ItemWorkoutSay
+import com.sleepyduck.workoutui.replaceWhen
 import com.sleepyduck.workoutui.setupForListUIAdapter
 import com.sleepyduck.workoutui.toListUIAdapterItems
 import kotlinx.android.synthetic.main.activity_main.view.*
@@ -23,6 +25,8 @@ import kotlinx.android.synthetic.main.fragment_workout.*
 class WorkoutFragment : Fragment() {
 
     private var workoutItems: List<ListUIAdapterItem> = listOf()
+    private val adapter = ListUIAdapter()
+    private lateinit var workout: Workout
 
     private val onPlayClickListener = View.OnClickListener {
         val repeat1 = workoutItems[0] as? ItemWorkoutRepeat
@@ -59,12 +63,15 @@ class WorkoutFragment : Fragment() {
         }, 21000)
     }
 
-    private val onItemClickListener = { workout: ItemWorkout ->
+    private val onItemClickListener = { itemWorkout: ItemWorkout ->
+        val editWorkoutListener = { changedWorkoutElement: WorkoutElement ->
+            val workoutData = workout.workoutData.replaceWhen(changedWorkoutElement) { it.id == changedWorkoutElement.id }
+            updateWorkout(workout.copy(workoutData = workoutData))
+        }
+
         asActivity {
             MaterialDialog(this).show {
-                editWorkout(workout.workout) {
-                    // TODO handle workout result
-                }
+                editWorkout(itemWorkout.workout, editWorkoutListener)
             }
         }
     }
@@ -80,25 +87,26 @@ class WorkoutFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val workout = arguments?.getParcelable<Workout>("workout")
+        updateWorkout(
+            arguments?.getParcelable("workout") ?: Workout(title = "Error, failed to load workout")
+        )
 
         recyclerView.setupForListUIAdapter()
-
-        recyclerView.adapter = ListUIAdapter().also { adapter ->
-            workoutItems = workout?.workoutData?.toListUIAdapterItems(
-                adapter,
-                onItemClickListener
-            ) ?: listOf()
-            adapter.items = workoutItems
-        }
+        recyclerView.adapter = adapter
 
         asActivity {
-            supportActionBar?.title = workout?.title
+            supportActionBar?.title = workout.title
         }
 
         view.rootView?.actionButton?.run {
             setImageResource(R.drawable.icon_play_white)
             setOnClickListener(onPlayClickListener)
         }
+    }
+
+    private fun updateWorkout(workout: Workout) {
+        this.workout = workout
+        workoutItems = workout.workoutData.toListUIAdapterItems(adapter, onItemClickListener)
+        adapter.items = workoutItems
     }
 }

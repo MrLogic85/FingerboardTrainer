@@ -12,14 +12,13 @@ import java.util.*
 fun List<WorkoutElement>.toListUIAdapterItems(
     adapter: ListUIAdapter,
     onItemClickListener: (ItemWorkout) -> Unit?
-): List<ListUIAdapterItem> =
-    map { it.toListUIAdapterItem(adapter, onItemClickListener) }
+): List<ListUIAdapterItem> = map { it.toListUIAdapterItem(adapter, onItemClickListener) }
 
 fun WorkoutElement.toListUIAdapterItem(
     adapter: ListUIAdapter,
     onItemClickListener: (ItemWorkout) -> Unit?
-) =
-    when (type.toWorkoutElementType()) {
+): ItemWorkout {
+    return when (type.toWorkoutElementType()) {
         WorkoutElementType.REPEAT -> ItemWorkoutRepeat(
             this,
             adapter,
@@ -38,24 +37,32 @@ fun WorkoutElement.toListUIAdapterItem(
             onItemClickListener
         )
     }
+}
 
-fun Long.toMillisString() =
-    when (this) {
-        null -> ""
+fun List<WorkoutElement>.replaceWhen(
+    newElement: WorkoutElement,
+    condition: (WorkoutElement) -> Boolean
+): List<WorkoutElement> {
+    return map {
+        val element = if (condition(it)) newElement else it
+        element.copy(
+            workouts = element.workouts.replaceWhen(newElement, condition)
+        )
+    }
+}
 
-        else -> {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = this
-            when {
+fun Long.toMillisString(): String {
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = this
+    return when {
                 this > 60000L -> "${calendar.get(Calendar.MINUTE)}m ${calendar.get(Calendar.SECOND)}s"
                 else -> "${calendar.get(Calendar.SECOND)}s"
-            }
-        }
     }
+}
 
 data class TimeStamp(val hours: Int, val minutes: Int, val seconds: Int)
 
-fun Long.toTimeStampe(): TimeStamp = TimeStamp(
+fun Long.toTimeStamp(): TimeStamp = TimeStamp(
     (this / 3600000L % 24).toInt(),
     (this / 60000L % 60).toInt(),
     (this / 1000L % 60).toInt()

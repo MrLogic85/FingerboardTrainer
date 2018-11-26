@@ -9,8 +9,9 @@ data class WorkoutElement(
         val id: String = UUID.randomUUID().toString(),
         val type: Int = WorkoutElementType.PAUSE.id,
         val icon: Int = WorkoutIcon.GIRL_EASY_CLIMB.id,
-        val name: String? = null,
-        val repeat: Int? = null,
-        val say: String? = null,
-        val timeMillis: Long? = null,
-        val workouts: List<WorkoutElement>? = null) : Parcelable
+        val name: String = "",
+        val repeat: Int = 1,
+        val say: String = "",
+        val timeMillis: Long = 0,
+        val workouts: List<WorkoutElement> = listOf()
+) : Parcelable

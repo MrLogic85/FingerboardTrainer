@@ -50,7 +50,8 @@
         android:layout_height="wrap_content"
         android:text="Time"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
-        app:layout_constraintBaseline_toBaselineOf="@+id/time"
+        android:paddingBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/timeLayout"
         app:layout_constraintStart_toStartOf="@+id/nameDesc" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -98,38 +99,28 @@
         app:layout_constraintTop_toBottomOf="@+id/say"
         tools:text="3" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/time"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Time"
-        android:inputType="time"
-        app:layout_constraintEnd_toEndOf="@+id/name"
-        app:layout_constraintStart_toStartOf="@+id/name"
-        app:layout_constraintTop_toBottomOf="@+id/count"
-        tools:text="05:00" />
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/timeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
         android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@+id/count"
-        app:layout_constraintTop_toBottomOf="@+id/time">
+        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/count">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/timeHours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00"
+            tools:text="00"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
-            android:text="h"
+            android:text="@string/dialog_hours_short"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:textSize="12sp" />
 
@@ -138,14 +129,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="00"
+            tools:text="00"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
-            android:text="m"
+            android:text="@string/dialog_minutes_short"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:textSize="12sp" />
 
@@ -154,14 +145,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="00"
+            tools:text="00"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
-            android:text="s"
+            android:text="@string/dialog_seconds_short"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:textSize="12sp" />
     </androidx.appcompat.widget.LinearLayoutCompat>

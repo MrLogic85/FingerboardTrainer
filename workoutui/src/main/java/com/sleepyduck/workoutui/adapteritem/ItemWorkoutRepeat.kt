@@ -21,7 +21,7 @@ class ItemWorkoutRepeat(
         private set
 
     private val innerAdapter = ListUIAdapter().apply {
-        items = workout.workouts?.toListUIAdapterItems(this, onItemClickListener) ?: listOf()
+        items = workout.workouts.toListUIAdapterItems(this, onItemClickListener)
         this@ItemWorkoutRepeat.items = items
     }
 
@@ -39,6 +39,23 @@ class ItemWorkoutRepeat(
             }
         }
 
+        holder.itemView.hint.text = repeat.toString()
         holder.itemView.actionGroup.visibility = View.GONE
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ItemWorkoutRepeat) return false
+        if (!super.equals(other)) return false
+
+        if (items != other.items) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + items.hashCode()
+        return result
     }
 }

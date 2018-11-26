@@ -57,8 +57,7 @@ class ListUIAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 }
 
 private fun Collection<*>.toPayloadsMap(): Map<String, Any?> = this
-    .map { it as? Pair<*, *> }
-    .requireNoNulls()
+    .mapNotNull { it as? Pair<*, *> }
     .toMap()
     .mapKeys { (key, _) -> key as String }
 

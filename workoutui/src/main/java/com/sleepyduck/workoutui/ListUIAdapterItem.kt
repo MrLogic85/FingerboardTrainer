@@ -34,4 +34,26 @@ open class ListUIAdapterItem(
             tag = if (selected) ListUIAdapter.TAG_SELECTED else null
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ListUIAdapterItem) return false
+
+        if (id != other.id) return false
+        if (adapter != other.adapter) return false
+        if (layout != other.layout) return false
+        if (backgroundColor != other.backgroundColor) return false
+        if (selected != other.selected) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + adapter.hashCode()
+        result = 31 * result + layout
+        result = 31 * result + backgroundColor
+        result = 31 * result + selected.hashCode()
+        return result
+    }
 }

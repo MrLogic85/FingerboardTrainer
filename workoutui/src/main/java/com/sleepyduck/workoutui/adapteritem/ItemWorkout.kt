@@ -14,14 +14,14 @@ open class ItemWorkout(
     val workout: WorkoutElement,
     private val adapter: ListUIAdapter,
     val onItemClickListener: (ItemWorkout) -> Unit?
-) : ActionItem(workout.hashCode().toLong(), adapter) {
+) : ActionItem(workout.id.hashCode().toLong(), adapter) {
 
     companion object {
         const val KEY_ICON = "icon"
         const val KEY_NAME = "name"
         const val KEY_SAY = "say"
         const val KEY_TIME_LEFT = "timeLeft"
-        const val KEY_COUNT = "count"
+        const val KEY_COUNT = "repeat"
     }
 
     var icon = workout.icon
@@ -48,7 +48,7 @@ open class ItemWorkout(
             field = value
         }
 
-    var count = workout.repeat
+    var repeat = workout.repeat
         set(value) {
             adapter.notifyItemChanged(this, KEY_COUNT to field)
             field = value
@@ -59,7 +59,7 @@ open class ItemWorkout(
         holder.itemView.icon.setImageResource(icon.toIconRes())
         holder.itemView.name.text = name
         holder.itemView.action.text = say
-        holder.itemView.hint.text = timeLeft?.toMillisString() ?: count?.toString()
+        holder.itemView.hint.text = timeLeft.toMillisString()
 
         if (payloads.containsKey(KEY_SELECTED)) {
             TextViewAnimator(holder.itemView.hint)
@@ -73,5 +73,29 @@ open class ItemWorkout(
         holder.itemView.setOnClickListener {
             onItemClickListener(this)
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ItemWorkout) return false
+        if (!super.equals(other)) return false
+
+        if (icon != other.icon) return false
+        if (name != other.name) return false
+        if (say != other.say) return false
+        if (timeLeft != other.timeLeft) return false
+        if (repeat != other.repeat) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + icon
+        result = 31 * result + name.hashCode()
+        result = 31 * result + say.hashCode()
+        result = 31 * result + timeLeft.hashCode()
+        result = 31 * result + repeat
+        return result
     }
 }
