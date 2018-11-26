@@ -10,7 +10,7 @@ data class User(val name: String = "")
 private const val USERS = "users"
 private const val WORKOUTS = "workouts"
 
-class Database {
+class Database() {
     private val firestore = FirebaseFirestore.getInstance()
 
     init {
@@ -57,5 +57,16 @@ class Database {
                         }
                     }
                 }
+    }
+
+    fun updateWorkout(
+        user: FirebaseUser,
+        workout: Workout
+    ) {
+        firestore.collection(USERS)
+            .document(user.uid)
+            .collection(WORKOUTS)
+            .document(workout.id)
+            .set(workout)
     }
 }

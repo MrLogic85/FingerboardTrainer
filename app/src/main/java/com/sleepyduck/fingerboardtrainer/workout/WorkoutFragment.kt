@@ -6,11 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import com.sleepyduck.datamodel.Workout
 import com.sleepyduck.datamodel.WorkoutElement
 import com.sleepyduck.fingerboardtrainer.R
 import com.sleepyduck.fingerboardtrainer.asActivity
+import com.sleepyduck.fingerboardtrainer.data.Database
+import com.sleepyduck.fingerboardtrainer.viewmodel.FirebaseUserViewModel
 import com.sleepyduck.workoutui.ListUIAdapter
 import com.sleepyduck.workoutui.ListUIAdapterItem
 import com.sleepyduck.workoutui.adapteritem.ItemWorkout
@@ -26,7 +29,9 @@ class WorkoutFragment : Fragment() {
 
     private var workoutItems: List<ListUIAdapterItem> = listOf()
     private val adapter = ListUIAdapter()
+    private val database = Database()
     private lateinit var workout: Workout
+    private var firebaseUserViewModel: FirebaseUserViewModel? = null
 
     private val onPlayClickListener = View.OnClickListener {
         val repeat1 = workoutItems[0] as? ItemWorkoutRepeat
@@ -66,7 +71,11 @@ class WorkoutFragment : Fragment() {
     private val onItemClickListener = { itemWorkout: ItemWorkout ->
         val editWorkoutListener = { changedWorkoutElement: WorkoutElement ->
             val workoutData = workout.workoutData.replaceWhen(changedWorkoutElement) { it.id == changedWorkoutElement.id }
-            updateWorkout(workout.copy(workoutData = workoutData))
+            val workout = workout.copy(workoutData = workoutData)
+            updateWorkout(workout)
+            firebaseUserViewModel?.user?.let { firebaseUser ->
+                database.updateWorkout(firebaseUser, workout)
+            }
         }
 
         asActivity {
@@ -96,6 +105,7 @@ class WorkoutFragment : Fragment() {
 
         asActivity {
             supportActionBar?.title = workout.title
+            firebaseUserViewModel = ViewModelProviders.of(this)[FirebaseUserViewModel::class.java]
         }
 
         view.rootView?.actionButton?.run {

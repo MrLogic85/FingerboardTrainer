@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.dialog_edit_workout.view.*
 @SuppressLint("InflateParams")
 fun MaterialDialog.editWorkout(
     workout: WorkoutElement,
-    result: (WorkoutElement) -> Unit
+    result: (WorkoutElement) -> Unit?
 ): MaterialDialog {
 
     val view = LayoutInflater.from(windowContext)
